@@ -18,7 +18,7 @@ export class MahasiswaController {
 
   @Post()
   create(@Body() createMahasiswaDto: CreateMahasiswaDto) {
-    return this.mahasiswaService.create(createMahasiswaDto);
+    return this.mahasiswaService.register(createMahasiswaDto);
   }
   @Post('add-otp')
   addOTP(@Body() otpDTO: OTP_DTO) {

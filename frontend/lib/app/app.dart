@@ -13,13 +13,15 @@ import 'package:iot/ui/views/dosen_register/dosen_register_view.dart';
 import 'package:iot/ui/views/dosen_login/dosen_login_view.dart';
 import 'package:iot/ui/dialogs/error/error_dialog.dart';
 import 'package:iot/ui/dialogs/success/success_dialog.dart';
+import 'package:iot/ui/views/kelas/kelas_view.dart';
 // @stacked-import
 
 @StackedApp(
   routes: [
     CustomRoute(page: HomeView),
     CustomRoute(page: StartupView),
-    CustomRoute(page: DosenView),
+    CustomRoute(
+        page: DosenView, transitionsBuilder: TransitionsBuilders.zoomIn),
     CustomRoute(
         page: MahasiswaRegisterView,
         transitionsBuilder: TransitionsBuilders.slideBottom),
@@ -32,6 +34,7 @@ import 'package:iot/ui/dialogs/success/success_dialog.dart';
     CustomRoute(
         page: DosenLoginView,
         transitionsBuilder: TransitionsBuilders.slideRightWithFade),
+    MaterialRoute(page: KelasView),
 // @stacked-route
   ],
   dependencies: [

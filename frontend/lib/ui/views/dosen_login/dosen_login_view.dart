@@ -33,17 +33,30 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
             ),
             verticalSpaceMedium,
             TextField(
+              controller: usernameController,
               decoration: InputDecoration(labelText: 'Username'),
               keyboardType: TextInputType.name,
             ),
             TextField(
+              controller: passwordController,
               decoration: InputDecoration(labelText: 'Password'),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.visiblePassword,
             ),
             verticalSpaceMedium,
             ElevatedButton(
-              onPressed: () {},
-              child: Text('Login'),
+              onPressed: viewModel.loginDosen,
+              child: !viewModel.isBusy
+                  ? const Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white),
+                    )
+                  : const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 3,
+                      )),
             ),
             verticalSpaceTiny,
             TextButton(
@@ -61,6 +74,7 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
   @override
   void onViewModelReady(DosenLoginViewModel viewModel) {
     syncFormWithViewModel(viewModel);
+    viewModel.init();
   }
 
   @override

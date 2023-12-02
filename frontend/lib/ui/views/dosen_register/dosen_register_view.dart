@@ -40,7 +40,7 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
             TextField(
               controller: passwordController,
               decoration: InputDecoration(labelText: 'Password'),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.visiblePassword,
             ),
             verticalSpaceMedium,
             ElevatedButton(

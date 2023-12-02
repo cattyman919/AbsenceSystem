@@ -5,18 +5,19 @@
 // **************************************************************************
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:flutter/material.dart' as _i9;
+import 'package:flutter/material.dart' as _i10;
 import 'package:flutter/material.dart';
 import 'package:iot/ui/views/dosen/dosen_view.dart' as _i4;
 import 'package:iot/ui/views/dosen_login/dosen_login_view.dart' as _i8;
 import 'package:iot/ui/views/dosen_register/dosen_register_view.dart' as _i7;
 import 'package:iot/ui/views/home/home_view.dart' as _i2;
+import 'package:iot/ui/views/kelas/kelas_view.dart' as _i9;
 import 'package:iot/ui/views/mahasiswa_otp/mahasiswa_otp_view.dart' as _i6;
 import 'package:iot/ui/views/mahasiswa_register/mahasiswa_register_view.dart'
     as _i5;
 import 'package:iot/ui/views/startup/startup_view.dart' as _i3;
 import 'package:stacked/stacked.dart' as _i1;
-import 'package:stacked_services/stacked_services.dart' as _i10;
+import 'package:stacked_services/stacked_services.dart' as _i11;
 
 class Routes {
   static const homeView = '/home-view';
@@ -33,6 +34,8 @@ class Routes {
 
   static const dosenLoginView = '/dosen-login-view';
 
+  static const kelasView = '/kelas-view';
+
   static const all = <String>{
     homeView,
     startupView,
@@ -41,6 +44,7 @@ class Routes {
     mahasiswaOtpView,
     dosenRegisterView,
     dosenLoginView,
+    kelasView,
   };
 }
 
@@ -74,11 +78,15 @@ class StackedRouter extends _i1.RouterBase {
       Routes.dosenLoginView,
       page: _i8.DosenLoginView,
     ),
+    _i1.RouteDef(
+      Routes.kelasView,
+      page: _i9.KelasView,
+    ),
   ];
 
   final _pagesMap = <Type, _i1.StackedRouteFactory>{
     _i2.HomeView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i2.HomeView(),
         settings: data,
@@ -89,7 +97,7 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i3.StartupView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i3.StartupView(),
         settings: data,
@@ -100,18 +108,15 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i4.DosenView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i4.DosenView(),
         settings: data,
-        transitionsBuilder: data.transition ??
-            (context, animation, secondaryAnimation, child) {
-              return child;
-            },
+        transitionsBuilder: data.transition ?? _i1.TransitionsBuilders.zoomIn,
       );
     },
     _i5.MahasiswaRegisterView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i5.MahasiswaRegisterView(),
         settings: data,
@@ -120,7 +125,7 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i6.MahasiswaOtpView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i6.MahasiswaOtpView(),
         settings: data,
@@ -128,7 +133,7 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i7.DosenRegisterView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i7.DosenRegisterView(),
         settings: data,
@@ -137,12 +142,18 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i8.DosenLoginView: (data) {
-      return _i9.PageRouteBuilder<dynamic>(
+      return _i10.PageRouteBuilder<dynamic>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i8.DosenLoginView(),
         settings: data,
         transitionsBuilder:
             data.transition ?? _i1.TransitionsBuilders.slideRightWithFade,
+      );
+    },
+    _i9.KelasView: (data) {
+      return _i10.MaterialPageRoute<dynamic>(
+        builder: (context) => const _i9.KelasView(),
+        settings: data,
       );
     },
   };
@@ -154,7 +165,7 @@ class StackedRouter extends _i1.RouterBase {
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
 }
 
-extension NavigatorStateExtension on _i10.NavigationService {
+extension NavigatorStateExtension on _i11.NavigationService {
   Future<dynamic> navigateToHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -253,6 +264,20 @@ extension NavigatorStateExtension on _i10.NavigationService {
         transition: transition);
   }
 
+  Future<dynamic> navigateToKelasView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return navigateTo<dynamic>(Routes.kelasView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
   Future<dynamic> replaceWithHomeView([
     int? routerId,
     bool preventDuplicates = true,
@@ -345,6 +370,20 @@ extension NavigatorStateExtension on _i10.NavigationService {
         transition,
   ]) async {
     return replaceWith<dynamic>(Routes.dosenLoginView,
+        id: routerId,
+        preventDuplicates: preventDuplicates,
+        parameters: parameters,
+        transition: transition);
+  }
+
+  Future<dynamic> replaceWithKelasView([
+    int? routerId,
+    bool preventDuplicates = true,
+    Map<String, String>? parameters,
+    Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
+        transition,
+  ]) async {
+    return replaceWith<dynamic>(Routes.kelasView,
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

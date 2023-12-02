@@ -1,11 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { AbsensiService } from './absensi.service';
 import { CreateAbsensiDto } from './dto/create-absensi.dto';
 import { UpdateAbsensiDto } from './dto/update-absensi.dto';
+import { Absensi } from './entities/absensi.entity';
 
 @Controller('absensi')
 export class AbsensiController {
   constructor(private readonly absensiService: AbsensiService) {}
+
+  @Get('/kelas/:idKelas/minggu/:mingguKe')
+  getKehadiran(
+    @Param('idKelas') idKelas: number,
+    @Param('mingguKe') mingguKe: number,
+  ): Promise<any> {
+    return this.absensiService.getKehadiran(idKelas, mingguKe);
+  }
 
   @Post()
   create(@Body() createAbsensiDto: CreateAbsensiDto) {

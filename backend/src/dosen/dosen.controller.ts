@@ -6,7 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  HttpCode,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { DosenService } from './dosen.service';
 import { CreateDosenDto } from './dto/create-dosen.dto';
 import { UpdateDosenDto } from './dto/update-dosen.dto';
@@ -27,15 +30,22 @@ export class DosenController {
 
   @Post('login')
   async login(@Body() createDosenDto: CreateDosenDto) {
-    const dosen = await this.dosenService.login(
-      createDosenDto.username,
-      createDosenDto.password,
-    );
+    const dosen = await this.dosenService.login(createDosenDto);
     if (dosen)
       return {
         username: dosen.username,
         message: 'Login successful',
       };
+  }
+
+  @Get('profile')
+  profile(@Req() request: Request) {
+    console.log(request.session);
+    console.log(request.sessionID);
+    return {
+      session: request.session,
+      sessionID: request.sessionID,
+    };
   }
 
   @Get()

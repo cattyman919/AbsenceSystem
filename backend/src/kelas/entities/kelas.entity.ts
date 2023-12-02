@@ -1,5 +1,13 @@
 import { Absensi } from 'src/absensi/entities/absensi.entity';
-import { PrimaryGeneratedColumn, Column, OneToMany, Entity } from 'typeorm';
+import { Mahasiswa } from 'src/mahasiswa/entities/mahasiswa.entity';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Entity,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
 
 @Entity('kelas')
 export class Kelas {
@@ -11,4 +19,7 @@ export class Kelas {
 
   @OneToMany(() => Absensi, (absensi) => absensi.kelas)
   absensi: Absensi[];
+
+  @ManyToMany(() => Mahasiswa, (mahasiswa) => mahasiswa.kelas)
+  mahasiswa: Mahasiswa[];
 }

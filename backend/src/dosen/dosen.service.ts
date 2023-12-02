@@ -38,16 +38,18 @@ export class DosenService {
     }
   }
 
-  async login(username: string, plainTextPassword: string): Promise<Dosen> {
+  async login(createDosenDto: CreateDosenDto): Promise<Dosen> {
     try {
-      const dosen = await this.dosenRepository.findOneBy({ username });
+      const dosen = await this.dosenRepository.findOneBy({
+        username: createDosenDto.username,
+      });
       if (!dosen) throw new BadRequestException('Dosen does not exist');
-      await this.verifyPassword(plainTextPassword, dosen.password);
+      await this.verifyPassword(createDosenDto.password, dosen.password);
       return dosen;
     } catch (error) {
       throw new HttpException(
         'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.FORBIDDEN,
       );
     }
   }
@@ -69,6 +71,10 @@ export class DosenService {
 
   async findAll() {
     return await this.dosenRepository.find();
+  }
+
+  async findOneByUsername(username: string) {
+    return await this.dosenRepository.findOneBy({ username });
   }
 
   findOne(id: number) {

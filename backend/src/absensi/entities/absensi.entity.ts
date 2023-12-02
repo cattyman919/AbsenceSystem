@@ -13,17 +13,20 @@ export class Absensi {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column('timestamp')
   waktu_masuk: string;
 
-  @Column()
-  waktu_keluar: boolean;
+  @Column('timestamp')
+  waktu_keluar: string;
 
-  @ManyToOne(() => Kelas, (kelas) => kelas.absensi)
-  @JoinColumn({ name: 'kelas' })
+  @Column()
+  minggu_ke: number;
+
+  @ManyToOne(() => Kelas, (kelas) => kelas.absensi, { eager: true })
+  @JoinColumn({ name: 'kelas_id' })
   kelas: Kelas;
 
-  @ManyToOne(() => Mahasiswa, (mahasiswa) => mahasiswa.absensi)
-  @JoinColumn({ name: 'mahasiswa' })
+  @ManyToOne(() => Mahasiswa, (mahasiswa) => mahasiswa.absensi, { eager: true })
+  @JoinColumn({ name: 'mahasiswa_id' })
   mahasiswa: Mahasiswa;
 }

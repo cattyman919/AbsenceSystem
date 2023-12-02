@@ -15,9 +15,27 @@ import { UpdateDosenDto } from './dto/update-dosen.dto';
 export class DosenController {
   constructor(private readonly dosenService: DosenService) {}
 
-  @Post()
-  create(@Body() createDosenDto: CreateDosenDto) {
-    return this.dosenService.create(createDosenDto);
+  @Post('register')
+  async register(@Body() createDosenDto: CreateDosenDto) {
+    const createdDosen = await this.dosenService.register(createDosenDto);
+    if (createdDosen)
+      return {
+        username: createdDosen.username,
+        message: 'Account has been successfuly created',
+      };
+  }
+
+  @Post('login')
+  async login(@Body() createDosenDto: CreateDosenDto) {
+    const dosen = await this.dosenService.login(
+      createDosenDto.username,
+      createDosenDto.password,
+    );
+    if (dosen)
+      return {
+        username: dosen.username,
+        message: 'Login successful',
+      };
   }
 
   @Get()

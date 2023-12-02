@@ -1,7 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { MahasiswaService } from './mahasiswa.service';
 import { CreateMahasiswaDto } from './dto/create-mahasiswa.dto';
 import { UpdateMahasiswaDto } from './dto/update-mahasiswa.dto';
+import { OTP_DTO } from './dto/otp.dto';
 
 @Controller('mahasiswa')
 export class MahasiswaController {
@@ -10,6 +19,15 @@ export class MahasiswaController {
   @Post()
   create(@Body() createMahasiswaDto: CreateMahasiswaDto) {
     return this.mahasiswaService.create(createMahasiswaDto);
+  }
+  @Post('add-otp')
+  addOTP(@Body() otpDTO: OTP_DTO) {
+    console.log(otpDTO);
+  }
+
+  @Post('verify-otp')
+  verifyOTP(@Body() otpDTO: OTP_DTO) {
+    console.log(otpDTO);
   }
 
   @Get()
@@ -23,7 +41,10 @@ export class MahasiswaController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMahasiswaDto: UpdateMahasiswaDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMahasiswaDto: UpdateMahasiswaDto,
+  ) {
     return this.mahasiswaService.update(+id, updateMahasiswaDto);
   }
 

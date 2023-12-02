@@ -25,6 +25,16 @@ import 'package:stacked_services/stacked_services.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeDuration_0 extends _i1.SmartFake implements Duration {
+  _FakeDuration_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [NavigationService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -671,4 +681,73 @@ class MockDialogService extends _i1.Mock implements _i2.DialogService {
 /// A class which mocks [ApiService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiService extends _i1.Mock implements _i7.ApiService {}
+class MockApiService extends _i1.Mock implements _i7.ApiService {
+  @override
+  String get localhostIP => (super.noSuchMethod(
+        Invocation.getter(#localhostIP),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#localhostIP),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#localhostIP),
+        ),
+      ) as String);
+
+  @override
+  String get deployURL => (super.noSuchMethod(
+        Invocation.getter(#deployURL),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#deployURL),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#deployURL),
+        ),
+      ) as String);
+
+  @override
+  Duration get timeoutDuration => (super.noSuchMethod(
+        Invocation.getter(#timeoutDuration),
+        returnValue: _FakeDuration_0(
+          this,
+          Invocation.getter(#timeoutDuration),
+        ),
+        returnValueForMissingStub: _FakeDuration_0(
+          this,
+          Invocation.getter(#timeoutDuration),
+        ),
+      ) as Duration);
+
+  @override
+  String get currentURL => (super.noSuchMethod(
+        Invocation.getter(#currentURL),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#currentURL),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#currentURL),
+        ),
+      ) as String);
+
+  @override
+  _i5.Future<void> register(
+    String? username,
+    String? password,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #register,
+          [
+            username,
+            password,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+}

@@ -5,7 +5,7 @@ import 'package:stacked_services/stacked_services.dart';
 import 'package:iot/services/api_service.dart';
 // @stacked-import
 
-import 'test_helpers.mocks.dart';
+import './test_helpers.mocks.dart';
 
 @GenerateMocks([], customMocks: [
   MockSpec<NavigationService>(onMissingStub: OnMissingStub.returnDefault),

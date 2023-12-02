@@ -8,6 +8,12 @@ const double _mediumSize = 25.0;
 const double _largeSize = 50.0;
 const double _massiveSize = 120.0;
 
+double get tinySize => _tinySize;
+double get smallSize => _smallSize;
+double get mediumSize => _mediumSize;
+double get largeSize => _largeSize;
+double get massiveSize => _massiveSize;
+
 const Widget horizontalSpaceTiny = SizedBox(width: _tinySize);
 const Widget horizontalSpaceSmall = SizedBox(width: _smallSize);
 const Widget horizontalSpaceMedium = SizedBox(width: _mediumSize);

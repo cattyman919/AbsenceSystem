@@ -151,8 +151,10 @@ class StackedRouter extends _i1.RouterBase {
       );
     },
     _i9.KelasView: (data) {
+      final args = data.getArgs<KelasViewArguments>(nullOk: false);
       return _i10.MaterialPageRoute<dynamic>(
-        builder: (context) => const _i9.KelasView(),
+        builder: (context) => _i9.KelasView(
+            key: args.key, idKelas: args.idKelas, namaKelas: args.namaKelas),
         settings: data,
       );
     },
@@ -163,6 +165,38 @@ class StackedRouter extends _i1.RouterBase {
 
   @override
   Map<Type, _i1.StackedRouteFactory> get pagesMap => _pagesMap;
+}
+
+class KelasViewArguments {
+  const KelasViewArguments({
+    this.key,
+    required this.idKelas,
+    required this.namaKelas,
+  });
+
+  final _i10.Key? key;
+
+  final int idKelas;
+
+  final String namaKelas;
+
+  @override
+  String toString() {
+    return '{"key": "$key", "idKelas": "$idKelas", "namaKelas": "$namaKelas"}';
+  }
+
+  @override
+  bool operator ==(covariant KelasViewArguments other) {
+    if (identical(this, other)) return true;
+    return other.key == key &&
+        other.idKelas == idKelas &&
+        other.namaKelas == namaKelas;
+  }
+
+  @override
+  int get hashCode {
+    return key.hashCode ^ idKelas.hashCode ^ namaKelas.hashCode;
+  }
 }
 
 extension NavigatorStateExtension on _i11.NavigationService {
@@ -264,14 +298,19 @@ extension NavigatorStateExtension on _i11.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> navigateToKelasView([
+  Future<dynamic> navigateToKelasView({
+    _i10.Key? key,
+    required int idKelas,
+    required String namaKelas,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return navigateTo<dynamic>(Routes.kelasView,
+        arguments: KelasViewArguments(
+            key: key, idKelas: idKelas, namaKelas: namaKelas),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,
@@ -376,14 +415,19 @@ extension NavigatorStateExtension on _i11.NavigationService {
         transition: transition);
   }
 
-  Future<dynamic> replaceWithKelasView([
+  Future<dynamic> replaceWithKelasView({
+    _i10.Key? key,
+    required int idKelas,
+    required String namaKelas,
     int? routerId,
     bool preventDuplicates = true,
     Map<String, String>? parameters,
     Widget Function(BuildContext, Animation<double>, Animation<double>, Widget)?
         transition,
-  ]) async {
+  }) async {
     return replaceWith<dynamic>(Routes.kelasView,
+        arguments: KelasViewArguments(
+            key: key, idKelas: idKelas, namaKelas: namaKelas),
         id: routerId,
         preventDuplicates: preventDuplicates,
         parameters: parameters,

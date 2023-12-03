@@ -88,6 +88,36 @@ class ApiService {
     }
   }
 
+  Future<void> registerMahasiswa(String nama, String npm, String rfid_tag,
+      int otp, List<int> kelasIds) async {
+    var bodyData = {
+      'nama': nama,
+      'npm': npm,
+      'rfid_tag': rfid_tag,
+      'otp': otp.toString(),
+    };
+    for (int i = 0; i < kelasIds.length; i++) {
+      bodyData.addAll({'kelasIds[$i]': kelasIds[i].toString()});
+    }
+    try {
+      final response = await http
+          .post(Uri.parse('$currentURL/mahasiswa/register'), body: bodyData)
+          .timeout(timeoutDuration);
+
+      if (response.statusCode == 201) return;
+
+      final responseJson = json.decode(response.body);
+
+      if (response.statusCode == 400) {
+        throw responseJson['message'];
+      } else {
+        throw "Failed to create account";
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     await storage.delete(key: 'username');
   }

@@ -22,27 +22,23 @@ export class AbsensiService {
       .leftJoinAndSelect('a.mahasiswa', 'm')
       .where('k.id = :idKelas', { idKelas })
       .andWhere('a.minggu_ke = :mingguKe', { mingguKe })
-      .select([
-        'm.id',
-        'm.nama',
-        'm.npm',
-        'a.waktu_masuk',
-        'a.waktu_keluar',
-        'a.minggu_ke',
-      ])
+      .select(['m.id', 'm.nama', 'm.npm', 'a.waktu_masuk', 'a.waktu_keluar'])
       .getMany();
 
-    if (absenHadir.length == 0) {
-      return {
-        hadir: absenHadir,
-        tidakHadir: [],
-      };
-    }
-
-    const absenTidakHadir = await this.mahasiswaRepository
+    const mahasiswaKelas = await this.mahasiswaRepository
       .createQueryBuilder('m')
       .leftJoin('m.kelas', 'k')
       .where('k.id = :idKelas', { idKelas })
+      .select(['m.id', 'm.nama', 'm.npm']);
+
+    if (absenHadir.length == 0) {
+      return {
+        hadir: [],
+        tidakHadir: await mahasiswaKelas.getMany(),
+      };
+    }
+
+    const absenTidakHadir = await mahasiswaKelas
       .andWhere('m.id NOT IN (:...hadirAbsen)', {
         hadirAbsen: absenHadir.map((a) => a.mahasiswa.id),
       })

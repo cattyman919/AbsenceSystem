@@ -16,8 +16,9 @@ import { OTP_DTO } from './dto/otp.dto';
 export class MahasiswaController {
   constructor(private readonly mahasiswaService: MahasiswaService) {}
 
-  @Post()
+  @Post('register')
   create(@Body() createMahasiswaDto: CreateMahasiswaDto) {
+    console.log(createMahasiswaDto);
     return this.mahasiswaService.register(createMahasiswaDto);
   }
   @Post('add-otp')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMahasiswaDto } from './dto/create-mahasiswa.dto';
 import { UpdateMahasiswaDto } from './dto/update-mahasiswa.dto';
 import { Mahasiswa } from './entities/mahasiswa.entity';
@@ -22,6 +22,8 @@ export class MahasiswaService {
     mahasiswa.rfid_tag = registerDto.rfid_tag;
     mahasiswa.otp = registerDto.otp;
 
+    console.log(registerDto.kelasIds);
+
     const kelas = await this.kelasRepository
       .createQueryBuilder('k')
       .where('k.id IN (:...kelasMahasiswa)', {
@@ -30,7 +32,12 @@ export class MahasiswaService {
       .getMany();
 
     mahasiswa.kelas = kelas;
-    return this.mahasiswaRepository.save(mahasiswa);
+    try {
+      await this.mahasiswaRepository.save(mahasiswa);
+    } catch (error) {
+      throw new HttpException(error['detail'], HttpStatus.BAD_REQUEST);
+    }
+    return this.mahasiswaRepository.findOneBy({ npm: mahasiswa.npm });
   }
 
   create(createMahasiswaDto: CreateMahasiswaDto) {

@@ -16,7 +16,7 @@ class ApiService {
   final deployURL = "https://jaga-backend.vercel.app";
 
   String get currentURL => localhostIP;
-  final Duration timeoutDuration = const Duration(seconds: 15);
+  final Duration timeoutDuration = const Duration(seconds: 10);
 
   Future<void> login(String username, String password) async {
     try {

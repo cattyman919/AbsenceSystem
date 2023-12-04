@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_secure_storage: ^9.0.0
+  mqtt_client: ^10.0.0
   stacked: ^3.4.0
   stacked_services: ^1.1.0
   supabase_flutter: ^1.10.25

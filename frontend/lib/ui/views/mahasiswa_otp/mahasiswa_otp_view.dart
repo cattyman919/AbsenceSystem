@@ -38,6 +38,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
             ),
             verticalSpaceMedium,
             TextField(
+              controller: otpController,
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Kode OTP',
@@ -46,16 +47,20 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
             ),
             verticalSpaceMedium,
             ElevatedButton(
-              onPressed: () => {},
-              child: Text('Verifikasi OTP'),
+              onPressed: viewModel.verifyOTP,
+              child: viewModel.isBusy
+                  ? loadingSpinnerSmall()
+                  : Text('Verifikasi OTP'),
             ),
+            viewModel.isBusy
+                ? Text(viewModel.statusMessage)
+                : SizedBox.shrink(),
             TextButton(
                 onPressed: viewModel.goToRegister,
                 child: Text("Register Mahasiswa")),
             TextButton(
                 onPressed: viewModel.goToDosenLogin,
                 child: Text("Login as Dosen")),
-            TextButton(onPressed: () {}, child: Text("Listen Websocket")),
           ],
         ),
       ),
@@ -72,4 +77,14 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
     BuildContext context,
   ) =>
       MahasiswaOtpViewModel();
+
+  Widget loadingSpinnerSmall() {
+    return const SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3,
+        ));
+  }
 }

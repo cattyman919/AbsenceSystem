@@ -29,10 +29,20 @@ class KelasView extends StackedView<KelasViewModel> {
             textScaleFactor: 2,
           ),
           verticalSpaceMedium,
-          Text(
-            'Minggu ke-1',
-            style: TextStyle(fontWeight: FontWeight.bold),
-            textScaleFactor: 1.3,
+          DropdownMenu<int>(
+            onSelected: viewModel.setMingguKe,
+            initialSelection: 1,
+            dropdownMenuEntries:
+                viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
+              return DropdownMenuEntry<int>(
+                value: e,
+                label: 'Minggu ke-${e}',
+                style: MenuItemButton.styleFrom(
+                    // foregroundColor: color.color,
+                    ),
+              );
+            }).toList(),
+            textStyle: TextStyle(fontWeight: FontWeight.bold),
           ),
           verticalSpaceMedium,
           Text(

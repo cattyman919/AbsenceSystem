@@ -21,16 +21,6 @@ export class MahasiswaController {
     console.log(createMahasiswaDto);
     return this.mahasiswaService.register(createMahasiswaDto);
   }
-  @Post('add-otp')
-  addOTP(@Body() otpDTO: OTP_DTO) {
-    console.log(otpDTO);
-  }
-
-  @Post('verify-otp')
-  verifyOTP(@Body() otpDTO: OTP_DTO) {
-    console.log(otpDTO);
-  }
-
   @Get()
   findAll() {
     return this.mahasiswaService.findAll();

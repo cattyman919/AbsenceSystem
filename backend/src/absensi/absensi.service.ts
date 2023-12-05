@@ -5,6 +5,8 @@ import { Absensi } from './entities/absensi.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Mahasiswa } from 'src/mahasiswa/entities/mahasiswa.entity';
+import { Kelas } from 'src/kelas/entities/kelas.entity';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class AbsensiService {
@@ -13,7 +15,7 @@ export class AbsensiService {
     private absensiRepository: Repository<Absensi>,
     @InjectRepository(Mahasiswa)
     private mahasiswaRepository: Repository<Mahasiswa>,
-  ) {}
+  ) { }
 
   async getKehadiran(idKelas: number, mingguKe: number) {
     const absenHadir = await this.absensiRepository
@@ -50,12 +52,34 @@ export class AbsensiService {
     };
   }
 
+  async absenMasuk(kelas: Kelas, mahasiswa: Mahasiswa, minggu_ke: number) {
+    return await this.absensiRepository.save({
+      kelas,
+      mahasiswa,
+      minggu_ke,
+    });
+  }
+  async absenKeluar(kelas: Kelas, mahasiswa: Mahasiswa, minggu_ke: number) {
+    //return moment().tz('Asia/Jakarta').toDate();
+    const absenBaru = await this.absensiRepository.findOneBy({
+      kelas,
+      mahasiswa,
+      minggu_ke,
+    });
+    absenBaru.waktu_keluar = moment().tz('Asia/Jakarta').toDate();
+    return await this.absensiRepository.save(absenBaru);
+  }
+
   create(createAbsensiDto: CreateAbsensiDto) {
     return 'This action adds a new absensi';
   }
 
   async findAll() {
     return await this.absensiRepository.find();
+  }
+
+  async findOneByMahasiswaAndMingguKe(mahasiswa: Mahasiswa, minggu_ke: number) {
+    return await this.absensiRepository.findOneBy({ mahasiswa, minggu_ke });
   }
 
   findOne(id: number) {

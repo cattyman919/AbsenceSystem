@@ -8,5 +8,6 @@ import { Kelas } from './entities/kelas.entity';
   imports: [TypeOrmModule.forFeature([Kelas])],
   controllers: [KelasController],
   providers: [KelasService],
+  exports: [KelasService]
 })
-export class KelasModule {}
+export class KelasModule { }

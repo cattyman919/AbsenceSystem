@@ -10,7 +10,7 @@ export class KelasService {
   constructor(
     @InjectRepository(Kelas)
     private kelasRepository: Repository<Kelas>,
-  ) {}
+  ) { }
 
   create(createKelaDto: CreateKelasDto) {
     return 'This action adds a new kela';
@@ -20,8 +20,8 @@ export class KelasService {
     return await this.kelasRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} kela`;
+  async findOne(id: number) {
+    return this.kelasRepository.findOneBy({ id });
   }
 
   update(id: number, updateKelaDto: UpdateKelasDto) {

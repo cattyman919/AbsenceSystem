@@ -6,6 +6,7 @@ import {
   ManyToOne,
   Entity,
   JoinColumn,
+  CreateDateColumn,
 } from 'typeorm';
 
 @Entity('absensi')
@@ -13,13 +14,13 @@ export class Absensi {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('timestamp')
-  waktu_masuk: string;
+  @CreateDateColumn({ name: 'waktu_masuk', type: 'timestamptz' })
+  waktu_masuk: Date;
 
-  @Column('timestamp')
-  waktu_keluar: string;
+  @Column('timestamptz')
+  waktu_keluar: Date;
 
-  @Column()
+  @Column({ name: 'minggu_ke', default: 1, nullable: false })
   minggu_ke: number;
 
   @ManyToOne(() => Kelas, (kelas) => kelas.absensi, { eager: true })

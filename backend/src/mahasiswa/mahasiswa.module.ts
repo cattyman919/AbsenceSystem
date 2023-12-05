@@ -9,5 +9,6 @@ import { Kelas } from 'src/kelas/entities/kelas.entity';
   imports: [TypeOrmModule.forFeature([Mahasiswa, Kelas])],
   controllers: [MahasiswaController],
   providers: [MahasiswaService],
+  exports: [MahasiswaService]
 })
-export class MahasiswaModule {}
+export class MahasiswaModule { }

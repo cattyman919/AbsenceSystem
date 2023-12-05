@@ -5,10 +5,15 @@ import { Absensi } from './entities/absensi.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MahasiswaModule } from 'src/mahasiswa/mahasiswa.module';
 import { Mahasiswa } from 'src/mahasiswa/entities/mahasiswa.entity';
+import { KelasModule } from 'src/kelas/kelas.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Absensi, Mahasiswa])],
+  imports: [
+    TypeOrmModule.forFeature([Absensi, Mahasiswa]),
+    MahasiswaModule,
+    KelasModule,
+  ],
   controllers: [AbsensiController],
   providers: [AbsensiService],
 })
-export class AbsensiModule {}
+export class AbsensiModule { }

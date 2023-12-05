@@ -13,14 +13,13 @@ export class MahasiswaService {
     private mahasiswaRepository: Repository<Mahasiswa>,
     @InjectRepository(Kelas)
     private kelasRepository: Repository<Kelas>,
-  ) {}
+  ) { }
 
   async register(registerDto: CreateMahasiswaDto) {
     const mahasiswa = new Mahasiswa();
     mahasiswa.nama = registerDto.nama;
     mahasiswa.npm = registerDto.npm;
     mahasiswa.rfid_tag = registerDto.rfid_tag;
-    mahasiswa.otp = registerDto.otp;
 
     console.log(registerDto.kelasIds);
 
@@ -48,8 +47,12 @@ export class MahasiswaService {
     return await this.mahasiswaRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} mahasiswa`;
+  async findOne(id: number) {
+    return await this.mahasiswaRepository.findOneBy({ id });
+  }
+
+  async findOneByRFID(rfid_tag: string) {
+    return await this.mahasiswaRepository.findOneBy({ rfid_tag });
   }
 
   update(id: number, updateMahasiswaDto: UpdateMahasiswaDto) {

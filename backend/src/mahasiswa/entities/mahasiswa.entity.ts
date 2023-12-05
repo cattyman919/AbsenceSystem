@@ -23,9 +23,6 @@ export class Mahasiswa {
   @Column({ length: 100, nullable: true, unique: true })
   rfid_tag: string;
 
-  @Column({ nullable: true, unique: true })
-  otp: number;
-
   @OneToMany(() => Absensi, (absensi) => absensi.mahasiswa)
   absensi: Absensi[];
 

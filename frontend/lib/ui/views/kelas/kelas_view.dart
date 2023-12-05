@@ -33,7 +33,7 @@ class KelasView extends StackedView<KelasViewModel> {
             DropdownMenu<int>(
               onSelected: viewModel.setMingguKe,
               initialSelection: 1,
-              textStyle: TextStyle(color: Colors.white),
+              textStyle: const TextStyle(color: Colors.white),
               menuStyle: MenuStyle(
                 backgroundColor:
                     MaterialStatePropertyAll<Color>(Colors.grey[900]!),
@@ -55,14 +55,14 @@ class KelasView extends StackedView<KelasViewModel> {
               }).toList(),
             ),
             verticalSpaceMedium,
-            Text(
+            const Text(
               'Hadir',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
-            verticalSpaceSmall,
+            verticalSpaceMedium,
             viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
             verticalSpaceMedium,
-            Text(
+            const Text(
               'Tidak Hadir',
               style: TextStyle(color: Colors.white, fontSize: 25),
             ),
@@ -76,7 +76,7 @@ class KelasView extends StackedView<KelasViewModel> {
 
   Widget hadirKelas(KelasViewModel viewModel) {
     return viewModel.absenKelas.hadir.length == 0
-        ? Center(
+        ? const Center(
             child: Text(
               'Kosong',
               style: TextStyle(color: Colors.white, fontSize: 22),
@@ -85,57 +85,83 @@ class KelasView extends StackedView<KelasViewModel> {
         : SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
+              border: TableBorder.all(
+                  borderRadius: BorderRadius.circular(5), color: Colors.grey),
               showBottomBorder: true,
-              columns: [
+              columns: const [
                 DataColumn(
-                    label: Text('Nama',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ))),
+                    label: Center(
+                  child: Text('Nama',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
                 DataColumn(
-                    label: Text('Waktu Masuk',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ))),
+                    label: Center(
+                  child: Text('Waktu Masuk',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
                 DataColumn(
-                    label: Text('Waktu Keluar',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ))),
+                    label: Center(
+                  child: Text('Waktu Keluar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
                 DataColumn(
-                    label: Text('Action',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ))),
+                    label: Center(
+                  child: Text('Action',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
               ],
               rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
                 final waktu_masuk = absensi.waktu_masuk;
                 final waktu_keluar = absensi.waktu_keluar;
+
+                void deleteAbsenCell() {
+                  viewModel.deleteAbsensi(absensi.id, absensi.minggu_ke);
+                }
+
                 return DataRow(cells: [
-                  DataCell(Text(absensi.mahasiswa!.nama!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white))),
-                  DataCell(Text(
-                      '${waktu_masuk!.hour}:${waktu_masuk!.minute}:${waktu_masuk.second}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white))),
-                  DataCell(Text(
-                      textAlign: TextAlign.center,
-                      "${waktu_keluar?.hour ?? '-'}:${waktu_keluar?.minute ?? '-'}:${waktu_keluar?.second ?? '-'}",
-                      style: TextStyle(color: Colors.white))),
-                  DataCell(Text('Delete')),
+                  DataCell(Center(
+                    child: Text(absensi.mahasiswa!.nama!,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text(
+                        '${waktu_masuk!.hour}:${waktu_masuk.minute}:${waktu_masuk.second}',
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text(
+                        "${waktu_keluar?.hour ?? '-'}:${waktu_keluar?.minute ?? '-'}:${waktu_keluar?.second ?? '-'}",
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(
+                    Center(
+                      child: TextButton(
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        onPressed: deleteAbsenCell,
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ),
                 ]);
               }).toList(),
             ),
@@ -144,7 +170,7 @@ class KelasView extends StackedView<KelasViewModel> {
 
   Widget tidakHadirKelas(KelasViewModel viewModel) {
     return viewModel.absenKelas.tidakHadir.length == 0
-        ? Center(
+        ? const Center(
             child: Text(
               'Kosong',
               style: TextStyle(color: Colors.white, fontSize: 22),
@@ -153,21 +179,31 @@ class KelasView extends StackedView<KelasViewModel> {
         : SingleChildScrollView(
             child: DataTable(
               showBottomBorder: true,
-              columns: [
+              border: TableBorder.all(
+                  borderRadius: BorderRadius.circular(5), color: Colors.grey),
+              columns: const [
                 DataColumn(
-                    label: Text('Nama', style: TextStyle(color: Colors.white))),
+                    label: Center(
+                        child: Text('Nama',
+                            style: TextStyle(color: Colors.white)))),
                 DataColumn(
-                    label: Text('NPM', style: TextStyle(color: Colors.white))),
+                    label: Center(
+                        child: Text('NPM',
+                            style: TextStyle(color: Colors.white)))),
               ],
               rows: viewModel.absenKelas.tidakHadir
                   .map<DataRow>((Mahasiswa mahasiswa) {
                 return DataRow(cells: [
-                  DataCell(Text(mahasiswa.nama!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white))),
-                  DataCell(Text(mahasiswa.npm!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white))),
+                  DataCell(Center(
+                    child: Text(mahasiswa.nama!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text(mahasiswa.npm!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
                 ]);
               }).toList(),
             ),
@@ -177,7 +213,7 @@ class KelasView extends StackedView<KelasViewModel> {
   Widget loadingSpinner() {
     return Container(
         alignment: Alignment.center,
-        padding: EdgeInsetsDirectional.only(top: 30),
+        padding: const EdgeInsetsDirectional.only(top: 30),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -189,11 +225,11 @@ class KelasView extends StackedView<KelasViewModel> {
                   strokeWidth: 3,
                 )),
             Padding(
+                padding: EdgeInsets.only(top: 20),
                 child: Text(
                   "Fetching data...",
                   style: TextStyle(color: Colors.grey),
-                ),
-                padding: EdgeInsets.only(top: 20)),
+                )),
           ],
         ));
   }

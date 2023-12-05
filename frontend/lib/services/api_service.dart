@@ -84,6 +84,19 @@ class ApiService {
     }
   }
 
+  Future<void> deleteAbsensi(int id) async {
+    try {
+      final response = await http
+          .delete(Uri.parse('$currentURL/absensi/${id}'))
+          .timeout(timeoutDuration);
+      final body = jsonDecode(response.body);
+      print(response.statusCode);
+      return body;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> register(String username, String password) async {
     try {
       final response = await http.post(
@@ -114,7 +127,6 @@ class ApiService {
       'nama': nama,
       'npm': npm,
       'rfid_tag': rfid_tag,
-      'otp': otp.toString(),
     };
     for (int i = 0; i < kelasIds.length; i++) {
       bodyData.addAll({'kelasIds[$i]': kelasIds[i].toString()});

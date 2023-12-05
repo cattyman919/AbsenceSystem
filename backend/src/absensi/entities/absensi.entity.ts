@@ -23,11 +23,19 @@ export class Absensi {
   @Column({ name: 'minggu_ke', default: 1, nullable: false })
   minggu_ke: number;
 
-  @ManyToOne(() => Kelas, (kelas) => kelas.absensi, { eager: true })
+  @ManyToOne(() => Kelas, (kelas) => kelas.absensi, {
+    eager: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'kelas_id' })
   kelas: Kelas;
 
-  @ManyToOne(() => Mahasiswa, (mahasiswa) => mahasiswa.absensi, { eager: true })
+  @ManyToOne(() => Mahasiswa, (mahasiswa) => mahasiswa.absensi, {
+    eager: true,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'mahasiswa_id' })
   mahasiswa: Mahasiswa;
 }

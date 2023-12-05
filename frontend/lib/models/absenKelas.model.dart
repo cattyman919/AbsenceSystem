@@ -1,3 +1,4 @@
+import 'package:iot/models/kelas.model.dart';
 import 'package:iot/models/mahasiswa.model.dart';
 
 class AbsenKelas {
@@ -25,24 +26,36 @@ class AbsenKelas {
 }
 
 class Hadir {
+  final int id;
   final DateTime? waktu_masuk;
   final DateTime? waktu_keluar;
+  final int minggu_ke;
   final Mahasiswa? mahasiswa;
+  final Kelas? kelas;
 
   Hadir(
-      {required this.waktu_masuk,
+      {required this.id,
+      required this.waktu_masuk,
       required this.waktu_keluar,
-      required this.mahasiswa});
+      required this.minggu_ke,
+      required this.mahasiswa,
+      required this.kelas});
 
   // Metode untuk mengubah JSON menjadi objek Kelas
   Hadir.fromJson(Map<String, dynamic> json)
-      : waktu_masuk = DateTime.parse(json["waktu_masuk"]) as DateTime?,
+      : id = json['id'] as int,
+        waktu_masuk = DateTime.parse(json["waktu_masuk"]) as DateTime?,
         waktu_keluar = DateTime.parse(json["waktu_keluar"]) as DateTime?,
-        mahasiswa = Mahasiswa.fromJson(json['mahasiswa']) as Mahasiswa?;
+        minggu_ke = json['minggu_ke'] as int,
+        mahasiswa = Mahasiswa.fromJson(json['mahasiswa']) as Mahasiswa?,
+        kelas = Kelas.fromJson(json['kelas']) as Kelas?;
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'waktu_masuk': waktu_masuk,
         'waktu_keluar': waktu_keluar,
-        'mahasiswa': mahasiswa
+        'minggu_ke': minggu_ke,
+        'mahasiswa': mahasiswa,
+        'kelas': kelas
       };
 }

@@ -24,14 +24,23 @@ export class AbsensiService {
       .leftJoinAndSelect('a.mahasiswa', 'm')
       .where('k.id = :idKelas', { idKelas })
       .andWhere('a.minggu_ke = :mingguKe', { mingguKe })
-      .select(['m.id', 'm.nama', 'm.npm', 'a.waktu_masuk', 'a.waktu_keluar'])
+      .select([
+        'm.id',
+        'm.nama',
+        'm.npm',
+        'a.id',
+        'a.minggu_ke',
+        'a.waktu_masuk',
+        'a.waktu_keluar',
+        'k',
+      ])
       .getMany();
 
     const mahasiswaKelas = await this.mahasiswaRepository
       .createQueryBuilder('m')
       .leftJoin('m.kelas', 'k')
       .where('k.id = :idKelas', { idKelas })
-      .select(['m.id', 'm.nama', 'm.npm']);
+      .select(['m.id', 'm.nama', 'm.npm', 'k']);
 
     if (absenHadir.length == 0) {
       return {
@@ -112,7 +121,13 @@ export class AbsensiService {
     return `This action updates a #${id} absensi`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} absensi`;
+  async remove(id: number) {
+    const absen = await this.absensiRepository.findOneBy({ id });
+    console.log(absen);
+    if (!absen) {
+      throw new HttpException('Absen does not exist', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.absensiRepository.remove(absen);
   }
 }

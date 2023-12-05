@@ -23,10 +23,16 @@ export class Mahasiswa {
   @Column({ length: 100, nullable: true, unique: true })
   rfid_tag: string;
 
-  @OneToMany(() => Absensi, (absensi) => absensi.mahasiswa)
+  @OneToMany(() => Absensi, (absensi) => absensi.mahasiswa, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  })
   absensi: Absensi[];
 
-  @ManyToMany(() => Kelas)
+  @ManyToMany(() => Kelas, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  })
   @JoinTable({
     name: 'enrollment', // Nama tabel perantara
     joinColumn: {

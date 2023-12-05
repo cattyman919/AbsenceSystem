@@ -15,7 +15,7 @@
 MFRC522 RFC(SS_PIN, RST_PIN);  // Create MFRC522 instance.
 HTTPClient HTTP;
 WiFiClient ESPClient;
-PubSubClient ClientMQTT(espClient);
+PubSubClient ClientMQTT(ESPClient);
 
 String getData, Link;
 String OldCardID = "";
@@ -30,6 +30,7 @@ const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 const String validOTP = "1234";
 const static String serverName = "https://absence-system.vercel.app/";
+const static int interval = 30000;
 
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -47,10 +48,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
     bool isVerified = verifyOTP(receivedMsg);
     if (isVerified) {
       Serial.println("Success");
-      client.publish("esp32/otpResponse", "Success");
+      ClientMQTT.publish("esp32/otpResponse", "Success");
     } else {
       Serial.println("Failed");
-      client.publish("esp32/otpResponse", "Failed");
+      ClientMQTT.publish("esp32/otpResponse", "Failed");
     }
   }
 }
@@ -60,14 +61,14 @@ bool verifyOTP(String receivedOTP) {
 }
 
 void mqtt_reconnect() {
-  while (!client.connected()) {
+  while (!ClientMQTT.connected()) {
     Serial.println("Attempting MQTT connection...");
-    if (client.connect("ESPTesting")) {
+    if (ClientMQTT.connect("ESPTesting")) {
       Serial.println("connected");
-      client.subscribe("esp32/otpRequest");
+      ClientMQTT.subscribe("esp32/otpRequest");
     } else {
       Serial.print("failed, rc=");
-      Serial.print(client.state());
+      Serial.print(ClientMQTT.state());
       Serial.println("Trying again in 5 seconds");
       delay(5000);
     }
@@ -139,6 +140,7 @@ void vTaskReadCard(void* params) {
     LCD.setCursor(0, 1);
     LCD.print("Tapped");
     vTaskDelay(5000 / portTICK_PERIOD_MS);
+    LCD.clear();
   }
 }
 
@@ -157,7 +159,7 @@ void setup() {
   }
   Serial.println("");
   Serial.println("Wi-Fi Connected!");
-  xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 1 * 1024, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 2 * 1024, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 1 * 1024, NULL, 2, NULL, 1);
   xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 2 * 1024, NULL, 1, NULL, 0);
   /*

@@ -18,7 +18,12 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Colors.grey[850], // Moderately dark background
+      appBar: AppBar(
+        title: Text('Mahasiswa Registration'),
+        backgroundColor: Colors.grey[900],
+      ),
+
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -30,22 +35,49 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                 Text(
                   "Register Mahasiswa",
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
                 verticalSpaceMedium,
                 Text(
                   'RFID : adasok',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 15, color: Colors.white),
                 ),
+                verticalSpaceMedium,
                 TextField(
                   controller: namaController,
-                  decoration: InputDecoration(labelText: 'Nama'),
+                  decoration: const InputDecoration(
+                      labelText: 'Nama',
+                      labelStyle:
+                          TextStyle(color: Colors.white70, fontSize: 15),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white70),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                      border: OutlineInputBorder()),
+                  style: TextStyle(color: Colors.white, fontSize: 15),
                   keyboardType: TextInputType.name,
                 ),
+                verticalSpaceSmall,
                 TextField(
                   controller: npmController,
-                  decoration: InputDecoration(labelText: 'NPM'),
+                  decoration: const InputDecoration(
+                      labelText: 'NPM',
+                      labelStyle:
+                          TextStyle(color: Colors.white70, fontSize: 15),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white70),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                      border: OutlineInputBorder()),
+                  style: TextStyle(color: Colors.white, fontSize: 15),
                   keyboardType: TextInputType.number,
                 ),
                 verticalSpaceMedium,
@@ -72,17 +104,41 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                         onPressed: () => _showKelasDialog(context, viewModel),
                         child: Text('Pilih Kelas'),
                       ),
+                verticalSpaceTiny,
                 ElevatedButton(
                   onPressed: viewModel.submitRegister,
-                  child: Text('Register'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue, // Button color
+                  ),
+                  child:
+                      Text('Register', style: TextStyle(color: Colors.white)),
                 ),
-                verticalSpaceTiny,
-                TextButton(
-                    onPressed: viewModel.goToOTP, child: Text("Verify OTP")),
+                additionalNavigation(viewModel),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget additionalNavigation(MahasiswaRegisterViewModel viewModel) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        children: [
+          actionLink('Verify OTP', viewModel.goToOTP),
+        ],
+      ),
+    );
+  }
+
+  Widget actionLink(String text, VoidCallback action) {
+    return TextButton(
+      onPressed: action,
+      child: Text(
+        text,
+        style: TextStyle(color: Colors.blueAccent),
       ),
     );
   }

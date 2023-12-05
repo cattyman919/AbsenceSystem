@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iot/ui/common/ui_helpers.dart';
 import 'package:stacked/stacked.dart';
 
 import 'dosen_viewmodel.dart';
@@ -13,11 +14,16 @@ class DosenView extends StackedView<DosenViewModel> {
     Widget? child,
   ) {
     return Scaffold(
+        backgroundColor: Colors.grey[850], // Moderately dark background
+        appBar: AppBar(
+          title: Text('Kelas Dashboard'),
+          backgroundColor: Colors.grey[900],
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: viewModel.showDialogKelasBaru,
           child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
         ),
-        backgroundColor: Theme.of(context).colorScheme.background,
         body: Container(
             padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 25),
             child: viewModel.isBusy
@@ -31,7 +37,8 @@ class DosenView extends StackedView<DosenViewModel> {
                             width: 64,
                             height: 64,
                             child: CircularProgressIndicator(
-                              color: Colors.black,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.blue),
                               strokeWidth: 3,
                             )),
                         Padding(
@@ -43,9 +50,13 @@ class DosenView extends StackedView<DosenViewModel> {
                 : Column(children: [
                     Text(
                       "Kelas",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      textScaleFactor: 2,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
+                    verticalSpaceSmall,
                     Expanded(child: kelasListWidget(viewModel))
                   ])));
   }
@@ -56,6 +67,7 @@ class DosenView extends StackedView<DosenViewModel> {
         itemBuilder: (context, index) {
           final kelas = viewModel.kelas[index];
           return Card(
+            color: Colors.grey[800],
             elevation: 2.0, // Adds a subtle shadow.
             margin: EdgeInsets.all(8.0), // Spacing around the card.
             child: Container(
@@ -69,7 +81,10 @@ class DosenView extends StackedView<DosenViewModel> {
                       .center, // Center the text horizontally.
                   children: [
                     ListTile(
-                      title: Text(kelas.nama!),
+                      title: Text(
+                        kelas.nama!,
+                        style: TextStyle(color: Colors.white),
+                      ),
                       onTap: () => viewModel.goToKelas(kelas.id!, kelas.nama!),
                     )
                   ]),

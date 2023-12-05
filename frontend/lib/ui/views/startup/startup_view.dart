@@ -23,6 +23,7 @@ class StartupView extends StackedView<StartupViewModel> {
               'Absence System',
               style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
             ),
+            verticalSpaceMedium,
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [

@@ -19,50 +19,90 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const Text(
-              "Register Dosen",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+      backgroundColor: Colors.grey[850], // Moderately dark background
+      appBar: AppBar(
+        title: Text('Dosen Register'),
+        backgroundColor: Colors.grey[900],
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(left: 25.0, right: 25.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const Text(
+                  "Register Dosen",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                verticalSpaceMedium,
+                TextField(
+                  controller: usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Username',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white70),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                  keyboardType: TextInputType.name,
+                ),
+                verticalSpaceMedium,
+                TextField(
+                  controller: passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(color: Colors.white70),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white70),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                  style: TextStyle(color: Colors.white),
+                ),
+                verticalSpaceMedium,
+                ElevatedButton(
+                  onPressed: viewModel.registerDosen,
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(200, 40),
+                  ),
+                  child: !viewModel.isBusy
+                      ? const Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 3,
+                          )),
+                ),
+                verticalSpaceTiny,
+                TextButton(
+                    onPressed: viewModel.goToLoginDosen,
+                    child: Text(
+                      "Login Dosen",
+                      style: TextStyle(color: Colors.blueAccent),
+                    )),
+              ],
             ),
-            verticalSpaceMedium,
-            TextField(
-              controller: usernameController,
-              decoration: InputDecoration(labelText: 'Username'),
-              keyboardType: TextInputType.name,
-            ),
-            TextField(
-              controller: passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              keyboardType: TextInputType.visiblePassword,
-            ),
-            verticalSpaceMedium,
-            ElevatedButton(
-              onPressed: viewModel.registerDosen,
-              child: !viewModel.isBusy
-                  ? const Text(
-                      'Register',
-                      style: TextStyle(color: Colors.white),
-                    )
-                  : const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 3,
-                      )),
-            ),
-            verticalSpaceTiny,
-            TextButton(
-                onPressed: viewModel.goToLoginDosen,
-                child: Text("Login Dosen")),
-          ],
+          ),
         ),
       ),
     );

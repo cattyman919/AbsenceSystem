@@ -88,7 +88,7 @@ class ErrorDialog extends StackedView<ErrorDialogModel> {
                 width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Color.fromARGB(255, 196, 39, 27),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(

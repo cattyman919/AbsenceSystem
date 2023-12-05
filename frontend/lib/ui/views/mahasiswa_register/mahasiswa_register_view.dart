@@ -3,7 +3,6 @@ import 'package:iot/ui/common/ui_helpers.dart';
 import 'package:iot/ui/views/mahasiswa_register/mahasiswa_register_view.form.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
-import 'package:iot/ui/common/ui_helpers.dart';
 import 'mahasiswa_register_viewmodel.dart';
 
 @FormView(fields: [FormTextField(name: 'nama'), FormTextField(name: 'npm')])
@@ -20,19 +19,17 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
     return Scaffold(
       backgroundColor: Colors.grey[850], // Moderately dark background
       appBar: AppBar(
-        title: Text('Mahasiswa Registration'),
+        title: const Text('Mahasiswa Registration'),
         backgroundColor: Colors.grey[900],
       ),
 
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            alignment: Alignment.center,
             padding: const EdgeInsets.only(left: 25.0, right: 25.0),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
+                const Text(
                   "Register Mahasiswa",
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -41,9 +38,8 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                       color: Colors.white),
                 ),
                 verticalSpaceMedium,
-                Text(
-                  'RFID : adasok',
-                  textAlign: TextAlign.center,
+                const Text(
+                  'RFID : {Null}',
                   style: TextStyle(fontSize: 15, color: Colors.white),
                 ),
                 verticalSpaceMedium,
@@ -60,7 +56,7 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                         borderSide: BorderSide(color: Colors.blue),
                       ),
                       border: OutlineInputBorder()),
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                   keyboardType: TextInputType.name,
                 ),
                 verticalSpaceSmall,
@@ -77,15 +73,13 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                         borderSide: BorderSide(color: Colors.blue),
                       ),
                       border: OutlineInputBorder()),
-                  style: TextStyle(color: Colors.white, fontSize: 15),
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
                   keyboardType: TextInputType.number,
                 ),
                 verticalSpaceMedium,
                 viewModel.isBusy
                     ? Container(
-                        alignment: Alignment.center,
                         child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
                                 width: 32,
@@ -95,23 +89,31 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                                   strokeWidth: 3,
                                 )),
                             Padding(
-                                child: Text("Fetching data..."),
-                                padding: EdgeInsets.only(top: 20)),
+                                padding: EdgeInsets.only(top: 20),
+                                child: Text(
+                                  "Fetching data...",
+                                  style: TextStyle(color: Colors.grey),
+                                )),
                           ],
                         ),
                       )
                     : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green, // Button color
+                          minimumSize: const Size(150, 35),
+                        ),
                         onPressed: () => _showKelasDialog(context, viewModel),
-                        child: Text('Pilih Kelas'),
+                        child: const Text('Pilih Kelas'),
                       ),
-                verticalSpaceTiny,
+                verticalSpaceSmall,
                 ElevatedButton(
                   onPressed: viewModel.submitRegister,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue, // Button color
+                    minimumSize: const Size(200, 40),
                   ),
                   child:
-                      Text('Register', style: TextStyle(color: Colors.white)),
+                      const Text('Register', style: TextStyle(color: Colors.white)),
                 ),
                 additionalNavigation(viewModel),
               ],
@@ -138,16 +140,16 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
       onPressed: action,
       child: Text(
         text,
-        style: TextStyle(color: Colors.blueAccent),
+        style: const TextStyle(color: Colors.blueAccent),
       ),
     );
   }
 
   Widget listKelasView(MahasiswaRegisterViewModel viewModel) {
     return ListView.builder(
-      itemCount: viewModel.listKelas!.length,
+      itemCount: viewModel.listKelas.length,
       itemBuilder: (context, index) {
-        final kelas = viewModel.listKelas![index];
+        final kelas = viewModel.listKelas[index];
         return CheckboxListTile(
           title: Text(kelas.nama!),
           value: viewModel.selectedKelas.contains(kelas.id),
@@ -163,16 +165,16 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Pilih Kelas"),
+          title: const Text("Pilih Kelas"),
           content: StatefulBuilder(
               builder: (BuildContext context, StateSetter setState) {
-            return Container(
+            return SizedBox(
               width: double.maxFinite,
               child: ListView.builder(
                 itemCount: model.listKelas.length ?? 0,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
-                  final kelas = model.listKelas![index];
+                  final kelas = model.listKelas[index];
                   return CheckboxListTile(
                     title: Text(kelas.nama!),
                     value: model.selectedKelas.contains(kelas.id),
@@ -188,7 +190,7 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
           }),
           actions: <Widget>[
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop();
                 // Logika selanjutnya setelah memilih kelas

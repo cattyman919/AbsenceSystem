@@ -20,7 +20,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
     return Scaffold(
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
-        title: Text('OTP Verification'),
+        title: const Text('OTP Verification'),
         backgroundColor: Colors.grey[900],
       ),
       body: Center(
@@ -30,7 +30,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
+              const Text(
                 "OTP",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -39,7 +39,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                     color: Colors.white),
               ),
               verticalSpaceMedium,
-              Text(
+              const Text(
                 'RFID : ${123}',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15, color: Colors.white),
@@ -48,7 +48,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
               TextField(
                 controller: otpController,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     labelText: 'Enter OTP',
                     labelStyle: TextStyle(color: Colors.white70, fontSize: 20),
                     enabledBorder: OutlineInputBorder(
@@ -58,22 +58,22 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                       borderSide: BorderSide(color: Colors.blue),
                     ),
                     border: OutlineInputBorder()),
-                style: TextStyle(color: Colors.white, fontSize: 20),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
               verticalSpaceMedium,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(200, 40),
+                  minimumSize: const Size(200, 40),
                 ),
                 onPressed: viewModel.verifyOTP,
                 child: viewModel.isBusy
                     ? loadingSpinnerSmall()
-                    : Text('Verifikasi OTP',
+                    : const Text('Verifikasi OTP',
                         style: TextStyle(color: Colors.white)),
               ),
               viewModel.isBusy
                   ? Text(viewModel.statusMessage)
-                  : SizedBox.shrink(),
+                  : const SizedBox.shrink(),
               navigationLinks(viewModel)
             ],
           ),
@@ -108,8 +108,8 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
       padding: const EdgeInsets.only(top: 20),
       child: Column(
         children: [
-          actionLink('Register Mahasiswa', viewModel.goToRegister),
           actionLink('Login as Dosen', viewModel.goToDosenLogin),
+          actionLink('Register Mahasiswa', viewModel.goToRegister),
         ],
       ),
     );
@@ -120,7 +120,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
       onPressed: action,
       child: Text(
         text,
-        style: TextStyle(color: Colors.blueAccent),
+        style: const TextStyle(color: Colors.blueAccent),
       ),
     );
   }

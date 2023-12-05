@@ -10,11 +10,10 @@ import {
 import { MahasiswaService } from './mahasiswa.service';
 import { CreateMahasiswaDto } from './dto/create-mahasiswa.dto';
 import { UpdateMahasiswaDto } from './dto/update-mahasiswa.dto';
-import { OTP_DTO } from './dto/otp.dto';
 
 @Controller('mahasiswa')
 export class MahasiswaController {
-  constructor(private readonly mahasiswaService: MahasiswaService) {}
+  constructor(private readonly mahasiswaService: MahasiswaService) { }
 
   @Post('register')
   create(@Body() createMahasiswaDto: CreateMahasiswaDto) {

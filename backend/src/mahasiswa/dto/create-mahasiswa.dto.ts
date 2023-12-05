@@ -20,10 +20,6 @@ export class CreateMahasiswaDto {
   @IsNotEmpty()
   rfid_tag: string;
 
-  @IsNumberString()
-  @IsNotEmpty()
-  otp: number;
-
   @IsNotEmpty()
   kelasIds: number[];
 }

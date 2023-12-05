@@ -44,11 +44,11 @@ class Hadir {
   // Metode untuk mengubah JSON menjadi objek Kelas
   Hadir.fromJson(Map<String, dynamic> json)
       : id = json['id'] as int,
-        waktu_masuk = DateTime.parse(json["waktu_masuk"]) as DateTime?,
-        waktu_keluar = DateTime.parse(json["waktu_keluar"]) as DateTime?,
+        waktu_masuk = DateTime.parse(json["waktu_masuk"]),
+        waktu_keluar = DateTime.parse(json["waktu_keluar"]),
         minggu_ke = json['minggu_ke'] as int,
-        mahasiswa = Mahasiswa.fromJson(json['mahasiswa']) as Mahasiswa?,
-        kelas = Kelas.fromJson(json['kelas']) as Kelas?;
+        mahasiswa = Mahasiswa.fromJson(json['mahasiswa']),
+        kelas = Kelas.fromJson(json['kelas']);
 
   Map<String, dynamic> toJson() => {
         'id': id,

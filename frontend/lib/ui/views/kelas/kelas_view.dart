@@ -41,13 +41,14 @@ class KelasView extends StackedView<KelasViewModel> {
               inputDecorationTheme: const InputDecorationTheme(
                 filled: true,
                 floatingLabelStyle: TextStyle(color: Colors.white),
+                border: InputBorder.none,
                 fillColor: Color.fromARGB(255, 29, 29, 29),
               ),
               dropdownMenuEntries:
                   viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
                 return DropdownMenuEntry<int>(
                     value: e,
-                    label: 'Minggu ke-${e}',
+                    label: 'Minggu ke-$e',
                     style: MenuItemButton.styleFrom(
                       backgroundColor: Colors.grey[900],
                       foregroundColor: Colors.white,
@@ -75,7 +76,7 @@ class KelasView extends StackedView<KelasViewModel> {
   }
 
   Widget hadirKelas(KelasViewModel viewModel) {
-    return viewModel.absenKelas.hadir.length == 0
+    return viewModel.absenKelas.hadir.isEmpty
         ? const Center(
             child: Text(
               'Kosong',
@@ -127,8 +128,8 @@ class KelasView extends StackedView<KelasViewModel> {
                 )),
               ],
               rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
-                final waktu_masuk = absensi.waktu_masuk;
-                final waktu_keluar = absensi.waktu_keluar;
+                final waktuMasuk = absensi.waktu_masuk;
+                final waktuKeluar = absensi.waktu_keluar;
 
                 void deleteAbsenCell() {
                   viewModel.deleteAbsensi(absensi.id, absensi.minggu_ke);
@@ -141,12 +142,12 @@ class KelasView extends StackedView<KelasViewModel> {
                   )),
                   DataCell(Center(
                     child: Text(
-                        '${waktu_masuk!.hour}:${waktu_masuk.minute}:${waktu_masuk.second}',
+                        '${waktuMasuk!.hour}:${waktuMasuk.minute}:${waktuMasuk.second}',
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(Center(
                     child: Text(
-                        "${waktu_keluar?.hour ?? '-'}:${waktu_keluar?.minute ?? '-'}:${waktu_keluar?.second ?? '-'}",
+                        "${waktuKeluar?.hour ?? '-'}:${waktuKeluar?.minute ?? '-'}:${waktuKeluar?.second ?? '-'}",
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(
@@ -154,7 +155,7 @@ class KelasView extends StackedView<KelasViewModel> {
                       child: TextButton(
                         style: TextButton.styleFrom(padding: EdgeInsets.zero),
                         onPressed: deleteAbsenCell,
-                        child: Icon(
+                        child: const Icon(
                           Icons.delete,
                           color: Colors.red,
                           size: 22,
@@ -169,7 +170,7 @@ class KelasView extends StackedView<KelasViewModel> {
   }
 
   Widget tidakHadirKelas(KelasViewModel viewModel) {
-    return viewModel.absenKelas.tidakHadir.length == 0
+    return viewModel.absenKelas.tidakHadir.isEmpty
         ? const Center(
             child: Text(
               'Kosong',
@@ -228,7 +229,7 @@ class KelasView extends StackedView<KelasViewModel> {
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
                   "Fetching data...",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.grey, fontSize: 17),
                 )),
           ],
         ));

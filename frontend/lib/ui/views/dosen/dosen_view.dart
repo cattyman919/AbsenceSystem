@@ -16,20 +16,20 @@ class DosenView extends StackedView<DosenViewModel> {
     return Scaffold(
         backgroundColor: Colors.grey[850], // Moderately dark background
         appBar: AppBar(
-          title: Text('Kelas Dashboard'),
+          title: const Text('Kelas Dashboard'),
           backgroundColor: Colors.grey[900],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: viewModel.showDialogKelasBaru,
-          child: Icon(Icons.add),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.grey[800],
+          child: const Icon(Icons.add),
         ),
         body: Container(
             padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 25),
             child: viewModel.isBusy
                 ? Container(
                     alignment: Alignment.center,
-                    padding: EdgeInsetsDirectional.only(top: 30),
+                    padding: const EdgeInsetsDirectional.only(top: 30),
                     child: const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -42,13 +42,17 @@ class DosenView extends StackedView<DosenViewModel> {
                               strokeWidth: 3,
                             )),
                         Padding(
-                            child: Text("Fetching data..."),
-                            padding: EdgeInsets.only(top: 20)),
+                            padding: EdgeInsets.only(top: 20),
+                            child: Text(
+                              "Fetching data...",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 18),
+                            )),
                       ],
                     ),
                   )
                 : Column(children: [
-                    Text(
+                    const Text(
                       "Kelas",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -63,31 +67,43 @@ class DosenView extends StackedView<DosenViewModel> {
 
   Widget kelasListWidget(DosenViewModel viewModel) {
     return ListView.builder(
+        shrinkWrap: true,
         itemCount: viewModel.kelas.length,
         itemBuilder: (context, index) {
           final kelas = viewModel.kelas[index];
           return Card(
             color: Colors.grey[800],
             elevation: 2.0, // Adds a subtle shadow.
-            margin: EdgeInsets.all(8.0), // Spacing around the card.
+            margin: const EdgeInsets.symmetric(
+                vertical: 8.0), // Spacing around the card.
             child: Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: 16.0,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 12.0,
                   vertical: 10.0), // Padding inside the container.
-              child: Column(
-                  mainAxisSize: MainAxisSize
-                      .min, // Use the minimum space that the child widgets need.
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center the text horizontally.
+              child: ListTile(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ListTile(
-                      title: Text(
-                        kelas.nama!,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onTap: () => viewModel.goToKelas(kelas.id!, kelas.nama!),
-                    )
-                  ]),
+                    Text(
+                      kelas.nama!,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        onPressed: () => viewModel.deleteKelas(kelas.id!),
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 22,
+                        )),
+                  ],
+                ),
+                onTap: () => viewModel.goToKelas(kelas.id!, kelas.nama!),
+              ),
             ),
           );
         });

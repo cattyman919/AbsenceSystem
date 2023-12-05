@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iot/ui/common/ui_helpers.dart';
-import 'package:iot/ui/views/dosen/dosen_viewmodel.dart';
 import 'package:iot/ui/views/dosen_login/dosen_login_view.form.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
@@ -22,16 +21,16 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
     return Scaffold(
       backgroundColor: Colors.grey[850], // Moderately dark background
       appBar: AppBar(
-        title: Text('Dosen Login'),
+        title: const Text('Dosen Login'),
         backgroundColor: Colors.grey[900],
       ),
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Text(
+              const Text(
                 "Login Dosen",
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -42,7 +41,7 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
               verticalSpaceMedium,
               TextField(
                 controller: usernameController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Username',
                   labelStyle: TextStyle(color: Colors.white70),
                   enabledBorder: OutlineInputBorder(
@@ -53,14 +52,14 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
                   ),
                   border: OutlineInputBorder(),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
                 keyboardType: TextInputType.name,
               ),
               verticalSpaceSmall,
               TextField(
                 controller: passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Password',
                   labelStyle: TextStyle(color: Colors.white70),
                   enabledBorder: OutlineInputBorder(
@@ -71,12 +70,12 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
                   ),
                   border: OutlineInputBorder(),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
               verticalSpaceMedium,
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: Size(200, 40),
+                  minimumSize: const Size(200, 40),
                 ),
                 onPressed: viewModel.loginDosen,
                 child: !viewModel.isBusy
@@ -115,7 +114,7 @@ class DosenLoginView extends StackedView<DosenLoginViewModel>
       onPressed: action,
       child: Text(
         text,
-        style: TextStyle(color: Colors.blueAccent),
+        style: const TextStyle(color: Colors.blueAccent),
       ),
     );
   }

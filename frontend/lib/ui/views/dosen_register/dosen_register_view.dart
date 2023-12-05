@@ -21,7 +21,7 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
     return Scaffold(
       backgroundColor: Colors.grey[850], // Moderately dark background
       appBar: AppBar(
-        title: Text('Dosen Register'),
+        title: const Text('Dosen Register'),
         backgroundColor: Colors.grey[900],
       ),
       body: Center(
@@ -43,7 +43,7 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
                 verticalSpaceMedium,
                 TextField(
                   controller: usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Username',
                     labelStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
@@ -54,14 +54,14 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
                     ),
                     border: OutlineInputBorder(),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                   keyboardType: TextInputType.name,
                 ),
                 verticalSpaceMedium,
                 TextField(
                   controller: passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(color: Colors.white70),
                     enabledBorder: OutlineInputBorder(
@@ -72,13 +72,13 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
                     ),
                     border: OutlineInputBorder(),
                   ),
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
                 verticalSpaceMedium,
                 ElevatedButton(
                   onPressed: viewModel.registerDosen,
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(200, 40),
+                    minimumSize: const Size(200, 40),
                   ),
                   child: !viewModel.isBusy
                       ? const Text(
@@ -96,7 +96,7 @@ class DosenRegisterView extends StackedView<DosenRegisterViewModel>
                 verticalSpaceTiny,
                 TextButton(
                     onPressed: viewModel.goToLoginDosen,
-                    child: Text(
+                    child: const Text(
                       "Login Dosen",
                       style: TextStyle(color: Colors.blueAccent),
                     )),

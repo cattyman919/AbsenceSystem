@@ -36,7 +36,6 @@ class KelasViewModel extends ReactiveViewModel {
   }
 
   void deleteAbsensi(int id, int week) async {
-    print(id);
     bool confirmationDeletion = (await _dialogService.showConfirmationDialog(
             description: "Are you sure you want to delete this item?",
             confirmationTitle: "Delete",
@@ -58,6 +57,7 @@ class KelasViewModel extends ReactiveViewModel {
           setMingguKe(week);
         });
       } catch (e) {
+        setBusy(false);
         _dialogService.showCustomDialog(
             variant: DialogType.error, description: "Delete item failed");
       }

@@ -36,7 +36,7 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
     setBusy(true);
     try {
       await _apiService.registerMahasiswa(
-          namaValue!, npmValue!, "secret123", 123456, selectedKelas);
+          namaValue!, npmValue!, "secret123", selectedKelas);
       setBusy(false);
       clearForm();
       selectedKelas.clear();

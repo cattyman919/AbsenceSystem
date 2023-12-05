@@ -14,6 +14,7 @@ import 'package:iot/ui/views/dosen_login/dosen_login_view.dart';
 import 'package:iot/ui/dialogs/error/error_dialog.dart';
 import 'package:iot/ui/dialogs/success/success_dialog.dart';
 import 'package:iot/ui/views/kelas/kelas_view.dart';
+import 'package:iot/ui/dialogs/new_kelas/new_kelas_dialog.dart';
 // @stacked-import
 
 @StackedApp(
@@ -52,6 +53,7 @@ import 'package:iot/ui/views/kelas/kelas_view.dart';
     StackedDialog(classType: InfoAlertDialog),
     StackedDialog(classType: ErrorDialog),
     StackedDialog(classType: SuccessDialog),
+    StackedDialog(classType: NewKelasDialog),
 // @stacked-dialog
   ],
 )

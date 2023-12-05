@@ -41,16 +41,7 @@ export class AbsensiController {
   ) {
     const kelas = await this.kelasService.findOne(idKelas);
     const mahasiswa = await this.mahasiswaService.findOneByRFID(rfid_mahasiswa);
-    const absen = await this.absensiService.findOneByMahasiswaAndMingguKe(
-      mahasiswa,
-      minggu_ke,
-    );
-    if (absen) {
-      throw new HttpException(
-        'Mahasiswa sudah absen masuk',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+
     return await this.absensiService.absenMasuk(kelas, mahasiswa, minggu_ke);
   }
   @Post('absen-keluar')
@@ -61,19 +52,7 @@ export class AbsensiController {
   ) {
     const kelas = await this.kelasService.findOne(idKelas);
     const mahasiswa = await this.mahasiswaService.findOneByRFID(rfid_mahasiswa);
-    const absen = await this.absensiService.findOneByMahasiswaAndMingguKe(
-      mahasiswa,
-      minggu_ke,
-    );
-    if (!absen) {
-      throw new HttpException(
-        'Mahasiswa belum absen masuk',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    if (absen.waktu_keluar != null) {
-      throw new HttpException('Mahasiswa sudah keluar', HttpStatus.BAD_REQUEST);
-    }
+
     return await this.absensiService.absenKeluar(kelas, mahasiswa, minggu_ke);
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateAbsensiDto } from './dto/create-absensi.dto';
 import { UpdateAbsensiDto } from './dto/update-absensi.dto';
 import { Absensi } from './entities/absensi.entity';
@@ -53,6 +53,19 @@ export class AbsensiService {
   }
 
   async absenMasuk(kelas: Kelas, mahasiswa: Mahasiswa, minggu_ke: number) {
+    const absen = await this.absensiRepository.findOneBy({
+      kelas,
+      mahasiswa,
+      minggu_ke,
+    });
+
+    if (absen) {
+      throw new HttpException(
+        'Mahasiswa sudah absen masuk',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return await this.absensiRepository.save({
       kelas,
       mahasiswa,
@@ -60,7 +73,20 @@ export class AbsensiService {
     });
   }
   async absenKeluar(kelas: Kelas, mahasiswa: Mahasiswa, minggu_ke: number) {
-    //return moment().tz('Asia/Jakarta').toDate();
+    const absen = await this.absensiRepository.findOneBy({
+      kelas,
+      mahasiswa,
+      minggu_ke,
+    });
+    if (!absen) {
+      throw new HttpException(
+        'Mahasiswa belum absen masuk',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    if (absen.waktu_keluar != null) {
+      throw new HttpException('Mahasiswa sudah keluar', HttpStatus.BAD_REQUEST);
+    }
     const absenBaru = await this.absensiRepository.findOneBy({
       kelas,
       mahasiswa,
@@ -76,10 +102,6 @@ export class AbsensiService {
 
   async findAll() {
     return await this.absensiRepository.find();
-  }
-
-  async findOneByMahasiswaAndMingguKe(mahasiswa: Mahasiswa, minggu_ke: number) {
-    return await this.absensiRepository.findOneBy({ mahasiswa, minggu_ke });
   }
 
   findOne(id: number) {

@@ -12,8 +12,8 @@ export class KelasService {
     private kelasRepository: Repository<Kelas>,
   ) { }
 
-  create(createKelaDto: CreateKelasDto) {
-    return 'This action adds a new kela';
+  async create(createKelasDto: CreateKelasDto) {
+    return await this.kelasRepository.save(createKelasDto);
   }
 
   async findAll() {

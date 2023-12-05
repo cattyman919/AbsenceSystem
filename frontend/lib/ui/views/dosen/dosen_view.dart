@@ -13,6 +13,10 @@ class DosenView extends StackedView<DosenViewModel> {
     Widget? child,
   ) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: viewModel.showDialogKelasBaru,
+          child: Icon(Icons.add),
+        ),
         backgroundColor: Theme.of(context).colorScheme.background,
         body: Container(
             padding: const EdgeInsets.only(left: 25.0, right: 25.0, top: 25),

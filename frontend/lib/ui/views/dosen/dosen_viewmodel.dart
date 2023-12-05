@@ -1,6 +1,6 @@
+import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
 import 'package:iot/app/app.router.dart';
-import 'package:iot/models/absenKelas.model.dart';
 import 'package:iot/models/kelas.model.dart';
 import 'package:iot/services/api_service.dart';
 import 'package:stacked/stacked.dart';
@@ -19,6 +19,15 @@ class DosenViewModel extends BaseViewModel {
     setBusy(true);
     _kelas = await _apiService.fetchKelas();
     setBusy(false);
+  }
+
+  void showDialogKelasBaru() {
+    print("dialog");
+    _dialogService
+        .showCustomDialog(
+          variant: DialogType.newKelas,
+        )
+        .whenComplete(() => {});
   }
 
   void goToKelas(int id, String nama) {

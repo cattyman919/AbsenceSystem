@@ -9,12 +9,14 @@ import 'package:stacked_services/stacked_services.dart';
 import 'app.locator.dart';
 import '../ui/dialogs/error/error_dialog.dart';
 import '../ui/dialogs/info_alert/info_alert_dialog.dart';
+import '../ui/dialogs/new_kelas/new_kelas_dialog.dart';
 import '../ui/dialogs/success/success_dialog.dart';
 
 enum DialogType {
   infoAlert,
   error,
   success,
+  newKelas,
 }
 
 void setupDialogUi() {
@@ -27,6 +29,8 @@ void setupDialogUi() {
         ErrorDialog(request: request, completer: completer),
     DialogType.success: (context, request, completer) =>
         SuccessDialog(request: request, completer: completer),
+    DialogType.newKelas: (context, request, completer) =>
+        NewKelasDialog(request: request, completer: completer),
   };
 
   dialogService.registerCustomDialogBuilders(builders);

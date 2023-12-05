@@ -79,7 +79,6 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                 verticalSpaceTiny,
                 TextButton(
                     onPressed: viewModel.goToOTP, child: Text("Verify OTP")),
-                TextButton(onPressed: () {}, child: Text("Listen Websocket")),
               ],
             ),
           ),

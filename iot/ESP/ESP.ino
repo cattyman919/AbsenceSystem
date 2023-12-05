@@ -24,8 +24,8 @@ static int lcdColumns = 18;                               // 18 columns LCD
 static int lcdRows = 2;                                   // 2 rows LCD
 static LiquidCrystal_I2C LCD(0x27, lcdColumns, lcdRows);  // LCD object
 const char* ESP_AP_PASSWORD = "AP-ESP32";                 // Customizable ESP AP password
-const char* SSID = "nand";
-const char* PASSWORD = "GIGACHAD";
+const char* SSID = "ADJUST-YOUR-SSID";
+const char* PASSWORD = "ADJUST-YOUR-PASSWORD";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 const String validOTP = "1234";

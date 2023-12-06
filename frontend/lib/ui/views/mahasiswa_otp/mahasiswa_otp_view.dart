@@ -18,6 +18,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
     Widget? child,
   ) {
     return Scaffold(
+
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
         title: const Text('OTP Verification'),
@@ -39,8 +40,8 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                     color: Colors.white),
               ),
               verticalSpaceMedium,
-              const Text(
-                'RFID : ${123}',
+              Text(
+                'RFID : ${viewModel.rfid_tag}',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 15, color: Colors.white),
               ),
@@ -84,6 +85,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
 
   @override
   void onViewModelReady(MahasiswaOtpViewModel viewModel) {
+    viewModel.init();
     syncFormWithViewModel(viewModel);
   }
 

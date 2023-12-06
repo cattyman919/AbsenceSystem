@@ -38,8 +38,8 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                       color: Colors.white),
                 ),
                 verticalSpaceMedium,
-                const Text(
-                  'RFID : {Null}',
+                Text(
+                  'RFID : ${viewModel.rfid_tag}',
                   style: TextStyle(fontSize: 15, color: Colors.white),
                 ),
                 verticalSpaceMedium,
@@ -112,8 +112,8 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                     backgroundColor: Colors.blue, // Button color
                     minimumSize: const Size(200, 40),
                   ),
-                  child:
-                      const Text('Register', style: TextStyle(color: Colors.white)),
+                  child: const Text('Register',
+                      style: TextStyle(color: Colors.white)),
                 ),
                 additionalNavigation(viewModel),
               ],

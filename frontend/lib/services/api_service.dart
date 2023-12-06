@@ -97,6 +97,7 @@ class ApiService {
           )
           .timeout(timeoutDuration);
       final body = jsonDecode(response.body);
+      print(body);
 
       absenKelas = AbsenKelas.fromJson(body);
 

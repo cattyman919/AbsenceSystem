@@ -14,6 +14,8 @@ class MahasiswaOtpViewModel extends FormViewModel {
   final client = mqtt.MqttServerClient('broker.hivemq.com', '');
   String _statusMessage = '';
 
+  String rfid_tag = '';
+
   String get statusMessage => _statusMessage;
 
   Future<void> goToRegister() async {
@@ -29,9 +31,24 @@ class MahasiswaOtpViewModel extends FormViewModel {
     notifyListeners(); // Notify the UI about the update
   }
 
-  void verifyOTP() async {
+  void init() async {
     client.setProtocolV311();
 
+    try {
+      await client.connect();
+    } catch (e) {
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    // Subscribe to the same topic
+    client.subscribe('esp32/cardDetected', MqttQos.exactlyOnce);
+    client.subscribe('esp32/otpVerificationResult', MqttQos.exactlyOnce);
+
+    listenForVerificationResult();
+  }
+
+  void verifyOTP() async {
     if (otpValue!.isEmpty) {
       _dialogService.showCustomDialog(
         variant: DialogType.error,
@@ -42,21 +59,11 @@ class MahasiswaOtpViewModel extends FormViewModel {
 
     setBusy(true);
     //updateStatusMessage("Connecting to MQTT...");
-    try {
-      await client.connect();
-    } catch (e) {
-      print('Exception: $e');
-      client.disconnect();
-    }
-
-    // Subscribe to the same topic
-    client.subscribe('esp32/otpResponse', MqttQos.exactlyOnce);
 
     updateStatusMessage("Publishing Message...");
-    publishMessage(otpValue!, 'esp32/otpRequest');
+    publishMessage(otpValue!, 'esp32/otpEntered');
 
     updateStatusMessage("Waiting for response...");
-    listenForVerificationResult();
     setBusy(false);
 
     // Call publishMessage with the data you want to send
@@ -71,40 +78,42 @@ class MahasiswaOtpViewModel extends FormViewModel {
   }
 
   void listenForVerificationResult() async {
-    List<MqttReceivedMessage<MqttMessage>> response =
-        await client.updates!.first;
-    final MqttPublishMessage recMess =
-        response[0].payload as MqttPublishMessage;
-    final String message =
-        MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+    // List<MqttReceivedMessage<MqttMessage>> response =
+    //     await client.updates!.first;
+    // final MqttPublishMessage recMess =
+    //     response[0].payload as MqttPublishMessage;
+    // final String message =
+    //     MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    print('Received message:$message from topic: ${response[0].topic}>');
-    if (message == "Success") {
-      _dialogService.showCustomDialog(
-          variant: DialogType.success,
-          description: "OTP Authentication Success");
-    } else if (message == "Failed") {
-      _dialogService.showCustomDialog(
-          variant: DialogType.error, description: "OTP Authentication Failed");
-    }
-    // client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-    //   final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-    //   final String message =
-    //       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+    // print('Received message:$message from topic: ${response[0].topic}>');
+    // if (message == "Success") {
+    //   _dialogService.showCustomDialog(
+    //       variant: DialogType.success,
+    //       description: "OTP Authentication Success");
+    // } else if (message == "Failed") {
+    //   _dialogService.showCustomDialog(
+    //       variant: DialogType.error, description: "OTP Authentication Failed");
+    // }
 
-    //   print('Received message:$message from topic: ${c[0].topic}>');
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+      final String message =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    //   if (message == "Success") {
-    //     _dialogService.showCustomDialog(
-    //         variant: DialogType.success,
-    //         description: "OTP Authentication Success");
-    //   } else if (message == "Failed") {
-    //     _dialogService.showCustomDialog(
-    //         variant: DialogType.error,
-    //         description: "OTP Authentication Failed");
-    //   }
+      print('Received message:$message from topic: ${c[0].topic}>');
 
-    //   // Handle the message (e.g., update UI)
-    // });
+      if (message == "Success") {
+        _dialogService.showCustomDialog(
+            variant: DialogType.success,
+            description: "OTP Authentication Success");
+      } else if (message == "Failed") {
+        _dialogService.showCustomDialog(
+            variant: DialogType.error,
+            description: "OTP Authentication Failed");
+      } else {
+        rfid_tag = message;
+      }
+      // Handle the message (e.g., update UI)
+    });
   }
 }

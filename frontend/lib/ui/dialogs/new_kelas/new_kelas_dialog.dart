@@ -96,7 +96,7 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
                     onPressed: () => viewModel.createNewKelas(completer),
                     child: viewModel.isBusy
                         ? loadingSpinnerSmall()
-                        : Text(
+                        : const Text(
                             'Submit',
                             style: TextStyle(
                               color: Colors.white,

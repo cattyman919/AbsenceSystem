@@ -30,6 +30,11 @@ export class MahasiswaController {
     return this.mahasiswaService.findOne(+id);
   }
 
+  @Get('/rfid/:rfid')
+  findOneByRFID(@Param('rfid') rfid: string) {
+    return this.mahasiswaService.findOneByRFID(rfid);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

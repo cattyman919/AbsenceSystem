@@ -28,10 +28,11 @@ const char* SSID = "ADJUST-YOUR-SSID";
 const char* PASSWORD = "ADJUST-YOUR-PASSWORD";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
-const String validOTP = "1234";
+// const String validOTP = "1234";
 const static String serverName = "https://absence-system.vercel.app/";
 const static int interval = 30000;
-
+static String lastGeneratedOTP = "";
+unsigned long otpValidityTime = 0;
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived on topic: ");
@@ -44,20 +45,40 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   Serial.println(receivedMsg);
 
-  if (String(topic) == "esp32/otpRequest") {
-    bool isVerified = verifyOTP(receivedMsg);
-    if (isVerified) {
-      Serial.println("Success");
-      ClientMQTT.publish("esp32/otpResponse", "Success");
+  if (String(topic) == "esp32/otpEntered") {
+    if (verifyOTP(receivedMsg)) {
+      Serial.println("OTP Verified.");
+      LCD.clear();
+      LCD.setCursor(0, 0);
+      LCD.print(OldCardID);
+      LCD.setCursor(0, 1);
+      LCD.print("Tapped in");
+      ClientMQTT.publish("esp32/otpVerificationResult", "Success");
     } else {
-      Serial.println("Failed");
-      ClientMQTT.publish("esp32/otpResponse", "Failed");
+      Serial.println("OTP Verification Failed.");
+      LCD.clear();
+      LCD.setCursor(0, 0);
+      LCD.print("OTP Failed.");
+      ClientMQTT.publish("esp32/otpVerificationResult", "Failed");
     }
   }
 }
 
+String generateOTP() {
+  String otp = "";
+  for (int i = 0; i < 4; i++) {
+    otp += String(random(0, 10));
+  }
+  return otp;
+}
+
 bool verifyOTP(String receivedOTP) {
-  return receivedOTP == validOTP;
+  if (millis() - otpValidityTime <= 30000) {
+    // Valid OTP under 30 seconds
+    return receivedOTP == lastGeneratedOTP;
+  }
+  // Expired OTP
+  return false;
 }
 
 void mqtt_reconnect() {
@@ -109,13 +130,10 @@ void vTaskReadCard(void* params) {
     vTaskDelay(50 / portTICK_PERIOD_MS);
 
     // Look for a new card
-    if (!RFC.PICC_IsNewCardPresent()) {
+    if (!RFC.PICC_IsNewCardPresent() || !RFC.PICC_ReadCardSerial()) {
       continue;  // Get to the start of the loop if there is no card present
     }
-    // Select one of the cards
-    if (!RFC.PICC_ReadCardSerial()) {
-      continue;  // If read card serial(0) returns 1, the uid struct contains the ID of the read card.
-    }
+
     String CardID = "";
 
     // Create a string to hold the hex representation of the UID
@@ -134,17 +152,30 @@ void vTaskReadCard(void* params) {
       OldCardID = CardID;
     }
 
-    Serial.println(CardID);
+    lastGeneratedOTP = generateOTP();
+    otpValidityTime = millis();
+
+    Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
+    LCD.clear();
     LCD.setCursor(0, 0);
+    LCD.print("ID: ");
     LCD.print(CardID);
     LCD.setCursor(0, 1);
-    LCD.print("Tapped");
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    LCD.print("OTP (30 seconds): ");
+    LCD.print(lastGeneratedOTP);
+
+    // Publish the card ID to MQTT
+    String payload = "CardID:" + CardID;
+    ClientMQTT.publish("esp32/cardDetected", payload.c_str());
+
+    Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
+    vTaskDelay(30000 / portTICK_PERIOD_MS);
     LCD.clear();
   }
 }
 
 void setup() {
+  randomSeed(analogRead(0));
   Serial.begin(115200);
   while (!Serial)
     ;

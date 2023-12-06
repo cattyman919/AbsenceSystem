@@ -24,11 +24,10 @@ static int lcdColumns = 18;                               // 18 columns LCD
 static int lcdRows = 2;                                   // 2 rows LCD
 static LiquidCrystal_I2C LCD(0x27, lcdColumns, lcdRows);  // LCD object
 const char* ESP_AP_PASSWORD = "AP-ESP32";                 // Customizable ESP AP password
-const char* SSID = "ADJUST-YOUR-SSID";
-const char* PASSWORD = "ADJUST-YOUR-PASSWORD";
+const char* SSID = "ADJUST-SSID";
+const char* PASSWORD = "ADJUST-PASSWORD";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
-// const String validOTP = "1234";
 const static String serverName = "https://absence-system.vercel.app/";
 const static int interval = 30000;
 static String lastGeneratedOTP = "";
@@ -84,9 +83,10 @@ bool verifyOTP(String receivedOTP) {
 void mqtt_reconnect() {
   while (!ClientMQTT.connected()) {
     Serial.println("Attempting MQTT connection...");
-    if (ClientMQTT.connect("ESPTesting")) {
+    String connectionID = "ESPA5" + String(random(0, 10000));
+    if (ClientMQTT.connect(connectionID.c_str())) {
       Serial.println("connected");
-      ClientMQTT.subscribe("esp32/otpRequest");
+      ClientMQTT.subscribe("esp32/otpEntered");
     } else {
       Serial.print("failed, rc=");
       Serial.print(ClientMQTT.state());
@@ -121,6 +121,23 @@ void vTaskWiFiConnection(void* params) {
   }
 }
 
+bool checkDBRFID(String ID) {
+  String checkerURL = serverName + "mahasiswa/rfid/" + ID;
+
+  HTTP.begin(checkerURL.c_str());
+
+  int responseCode = HTTP.GET();
+  if (responseCode == 200) {
+    Serial.println("RFID exists");
+    HTTP.end();
+    return true;
+  } else if (responseCode == 404) {
+    Serial.println("RFID doesn't exist");
+    HTTP.end();
+    return false;
+  }
+}
+
 void vTaskReadCard(void* params) {
   while (1) {
     if (millis() - previousMillis >= 15000) {
@@ -152,25 +169,34 @@ void vTaskReadCard(void* params) {
       OldCardID = CardID;
     }
 
-    lastGeneratedOTP = generateOTP();
-    otpValidityTime = millis();
-
-    Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
     LCD.clear();
-    LCD.setCursor(0, 0);
-    LCD.print("ID: ");
-    LCD.print(CardID);
-    LCD.setCursor(0, 1);
-    LCD.print("OTP (30 seconds): ");
-    LCD.print(lastGeneratedOTP);
+    if (checkDBRFID(CardID)) {
+      lastGeneratedOTP = generateOTP();
+      otpValidityTime = millis();
 
-    // Publish the card ID to MQTT
-    String payload = "CardID:" + CardID;
-    ClientMQTT.publish("esp32/cardDetected", payload.c_str());
+      LCD.setCursor(0, 0);
+      LCD.print("ID: ");
+      LCD.print(CardID);
+      LCD.setCursor(0, 1);
+      LCD.print("OTP: ");
+      LCD.print(lastGeneratedOTP);
 
-    Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
-    vTaskDelay(30000 / portTICK_PERIOD_MS);
-    LCD.clear();
+      // Publish the card ID to MQTT
+      String payload = CardID;
+      ClientMQTT.publish("esp32/cardDetected", payload.c_str());
+
+      Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
+      vTaskDelay(15000 / portTICK_PERIOD_MS);
+      LCD.clear();
+    } else {
+      String payloadRegister = CardID;
+      ClientMQTT.publish("esp32/cardDetected", payloadRegister.c_str());
+      Serial.println("Continue registration in Mobile App");
+      LCD.setCursor(0, 0);
+      LCD.print("Register in App");
+      vTaskDelay(3000 / portTICK_PERIOD_MS);
+      LCD.clear();
+    }
   }
 }
 
@@ -190,9 +216,11 @@ void setup() {
   }
   Serial.println("");
   Serial.println("Wi-Fi Connected!");
+  ClientMQTT.setServer(mqtt_server, mqtt_port);  // Setup MQTT server
+  ClientMQTT.setCallback(callback);              // Setup callback function for MQTT
   xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 2 * 1024, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 1 * 1024, NULL, 2, NULL, 1);
-  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 2 * 1024, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 4 * 1024, NULL, 1, NULL, 0);
   /*
   // WiFi Manager: Secure non-hardcoded approach for wi-fi connection
   WiFiManager wm;                                                // Local initialization of WiFi Manager object

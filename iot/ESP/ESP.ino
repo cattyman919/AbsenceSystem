@@ -82,7 +82,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.println(receivedMsg);
 
   if (String(topic) == "esp32/otpEntered") {
-    if (verifyOTP(receivedMsg)) {
+    String otp = receivedMsg.substring(0, 4);
+    String phoneID = receivedMsg.substring(7);
+    if (verifyOTP(otp)) {
       String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + OldCardID + "&minggu_ke=" + String(weekNumber);
       ;
       HTTP.begin(tapInURL.c_str());
@@ -102,7 +104,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
         LCD.print(name);
         LCD.setCursor(0, 1);
         LCD.print(NPM);
-        ClientMQTT.publish("esp32/otpVerificationResult", "Success");
+        String resultMsg = "Success:" + phoneID;
+        ClientMQTT.publish("esp32/otpVerificationResult", resultMsg.c_str());
         delay(3000);
         LCD.clear();
       } else {
@@ -113,7 +116,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
       LCD.clear();
       LCD.setCursor(0, 0);
       LCD.print("OTP Failed.");
-      ClientMQTT.publish("esp32/otpVerificationResult", "Failed");
+      String resultMsg = "Failed:" + phoneID;
+      ClientMQTT.publish("esp32/otpVerificationResult", resultMsg.c_str());
     }
   }
 }
@@ -127,8 +131,8 @@ String generateOTP() {
 }
 
 bool verifyOTP(String receivedOTP) {
-  if (millis() - otpValidityTime <= 30000) {
-    // Valid OTP under 30 seconds
+  if (millis() - otpValidityTime <= 15000) {
+    // Valid OTP under 15 seconds
     return receivedOTP == lastGeneratedOTP;
   }
   // Expired OTP
@@ -257,15 +261,20 @@ void vTaskReadCard(void* params) {
         String tapOutURL = serverName + "absensi/absen-keluar?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
         HTTP.begin(tapOutURL.c_str());
         int httpCode = HTTP.POST("");
-        Serial.println(tapOutURL);
-        Serial.println(httpCode);
+        Serial.println("Absen keluar code: " + httpCode);
         if (httpCode == 201) {
           Serial.println("Student tapped out");
+          String response = HTTP.getString();
+
+          DynamicJsonDocument doc(1024);
+          deserializeJson(doc, response);
+
+          String outName = doc["nama"].as<String>();
           LCD.clear();
           LCD.setCursor(0, 0);
-          LCD.print(OldCardID);
+          LCD.print(outName);
           LCD.setCursor(0, 1);
-          LCD.print("Tapped out");
+          LCD.print("GOODBYE");
         } else {
           Serial.println("Tapping out error.");
           LCD.clear();
@@ -297,7 +306,6 @@ void vTaskBlynkRun(void* params) {
 }
 
 void setup() {
-  // randomSeed(millis());
   Serial.begin(115200);
   while (!Serial)
     ;
@@ -318,7 +326,7 @@ void setup() {
   xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 4 * 1024, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 2 * 1024, NULL, 2, NULL, 1);
   xTaskCreatePinnedToCore(vTaskBlynkRun, "Handle Blynk Daemon Task", 2 * 1024, NULL, 3, NULL, 1);
-  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 6 * 1024, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 7 * 1024, NULL, 1, NULL, 0);
 
   vTaskDelete(NULL);  // Delete loop
 }

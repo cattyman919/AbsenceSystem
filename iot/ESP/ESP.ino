@@ -103,6 +103,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
         LCD.setCursor(0, 1);
         LCD.print(NPM);
         ClientMQTT.publish("esp32/otpVerificationResult", "Success");
+        delay(3000);
+        LCD.clear();
       } else {
         Serial.println("Failed to record.");
       }
@@ -193,7 +195,6 @@ bool checkDBRFID(String ID) {
 
 void vTaskReadCard(void* params) {
   while (1) {
-
     if (classID == 0 || weekNumber == 0) {
       Serial.println("Class/week is invalid");
       vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -296,7 +297,7 @@ void vTaskBlynkRun(void* params) {
 }
 
 void setup() {
-  randomSeed(millis());
+  // randomSeed(millis());
   Serial.begin(115200);
   while (!Serial)
     ;

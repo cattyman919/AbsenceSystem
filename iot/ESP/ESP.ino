@@ -1,3 +1,7 @@
+#define BLYNK_TEMPLATE_ID "TMPL6rBMwxzs8"
+#define BLYNK_TEMPLATE_NAME "AttendanceSystem"
+#define BLYNK_AUTH_TOKEN "AJYj8CL2dzZCCrxpF7EBER7ar7WnXXC1"
+//****************************^BLYNK TOKENS*******************************
 //*******************************libraries********************************
 //RFID-----------------------------
 #include <SPI.h>
@@ -7,6 +11,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <PubSubClient.h>
 #include <HTTPClient.h>
+#include <BlynkSimpleEsp32.h>
 
 //************************************************************************
 #define SS_PIN 5    // GPIO5
@@ -32,6 +37,35 @@ const static String serverName = "https://absence-system.vercel.app/";
 const static int interval = 30000;
 static String lastGeneratedOTP = "";
 unsigned long otpValidityTime = 0;
+static int classID = 0;     // Default IDLE machine
+static int weekNumber = 0;  // Default IDLE machine
+
+BLYNK_WRITE(V0) {
+  switch(param.asInt()){
+    case 1:
+      classID = 1; // RPL ID
+      break;
+    case 2:
+      classID = 2; // Probstok ID
+      break;
+    case 3:
+      classID = 19; // Matek ID
+      break;
+    case 4:
+      classID = 20; // Progdas ID
+      break;
+    case 5:
+      classID = 21; // Kemjar ID
+      break;
+    default:
+      classID = 0; // Default invalid class
+      break;
+  }
+}
+
+BLYNK_WRITE(V1) {
+  weekNumber = param.asInt();
+}
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived on topic: ");
@@ -140,6 +174,12 @@ bool checkDBRFID(String ID) {
 
 void vTaskReadCard(void* params) {
   while (1) {
+    
+    if(classID == 0 || weekNumber == 0){
+      Serial.println("Class/week is invalid");
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      continue;
+    } 
     if (millis() - previousMillis >= 15000) {
       previousMillis = millis();
       OldCardID = "";
@@ -171,23 +211,50 @@ void vTaskReadCard(void* params) {
 
     LCD.clear();
     if (checkDBRFID(CardID)) {
-      lastGeneratedOTP = generateOTP();
-      otpValidityTime = millis();
+      String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
+      HTTP.begin(tapInURL.c_str());
+      int responseCode = HTTP.POST();
 
-      LCD.setCursor(0, 0);
-      LCD.print("ID: ");
-      LCD.print(CardID);
-      LCD.setCursor(0, 1);
-      LCD.print("OTP: ");
-      LCD.print(lastGeneratedOTP);
+      if (responseCode == 200) {
+        lastGeneratedOTP = generateOTP();
+        otpValidityTime = millis();
 
-      // Publish the card ID to MQTT
-      String payload = CardID;
-      ClientMQTT.publish("esp32/cardDetected", payload.c_str());
+        LCD.setCursor(0, 0);
+        LCD.print("ID: ");
+        LCD.print(CardID);
+        LCD.setCursor(0, 1);
+        LCD.print("OTP: ");
+        LCD.print(lastGeneratedOTP);
 
-      Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
-      vTaskDelay(15000 / portTICK_PERIOD_MS);
-      LCD.clear();
+        // Publish the card ID to MQTT
+        String payload = CardID;
+        ClientMQTT.publish("esp32/cardDetected", payload.c_str());
+
+        Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
+        vTaskDelay(15000 / portTICK_PERIOD_MS);
+        LCD.clear();
+      } else if (responseCode == 400) {
+        String tapOutURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
+        HTTP.begin(tapOutURL.c_str());
+        int httpCode = HTTP.POST();
+        if (httpCode == 200) {
+          Serial.println("Student tapped out");
+          LCD.clear();
+          LCD.setCursor(0, 0);
+          LCD.print(OldCardID);
+          LCD.setCursor(0, 1);
+          LCD.print("Tapped out");
+        } else {
+          Serial.println("Tapping out error.");
+          LCD.clear();
+          LCD.setCursor(0, 0);
+          LCD.print("ERROR");
+          LCD.setCursor(0, 1);
+          LCD.print("Contact Admin");
+        }
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        LCD.clear();
+      }
     } else {
       String payloadRegister = CardID;
       ClientMQTT.publish("esp32/cardDetected", payloadRegister.c_str());

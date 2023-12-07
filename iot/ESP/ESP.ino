@@ -29,8 +29,8 @@ static int lcdColumns = 18;                               // 18 columns LCD
 static int lcdRows = 2;                                   // 2 rows LCD
 static LiquidCrystal_I2C LCD(0x27, lcdColumns, lcdRows);  // LCD object
 const char* ESP_AP_PASSWORD = "AP-ESP32";                 // Customizable ESP AP password
-const char* SSID = "ADJUST-SSID";
-const char* PASSWORD = "ADJUST-PASSWORD";
+const char* SSID = "nand";
+const char* PASSWORD = "GIGACHAD";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 const static String serverName = "https://absence-system.vercel.app/";
@@ -41,30 +41,32 @@ static int classID = 0;     // Default IDLE machine
 static int weekNumber = 0;  // Default IDLE machine
 
 BLYNK_WRITE(V0) {
-  switch(param.asInt()){
+  switch (param.asInt()) {
     case 1:
-      classID = 1; // RPL ID
+      classID = 1;  // RPL ID
       break;
     case 2:
-      classID = 2; // Probstok ID
+      classID = 2;  // Probstok ID
       break;
     case 3:
-      classID = 19; // Matek ID
+      classID = 19;  // Matek ID
       break;
     case 4:
-      classID = 20; // Progdas ID
+      classID = 20;  // Progdas ID
       break;
     case 5:
-      classID = 21; // Kemjar ID
+      classID = 21;  // Kemjar ID
       break;
     default:
-      classID = 0; // Default invalid class
+      classID = 0;  // Default invalid class
       break;
   }
+  Serial.println(classID);
 }
 
 BLYNK_WRITE(V1) {
   weekNumber = param.asInt();
+  Serial.println(weekNumber);
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -80,13 +82,21 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   if (String(topic) == "esp32/otpEntered") {
     if (verifyOTP(receivedMsg)) {
-      Serial.println("OTP Verified.");
-      LCD.clear();
-      LCD.setCursor(0, 0);
-      LCD.print(OldCardID);
-      LCD.setCursor(0, 1);
-      LCD.print("Tapped in");
-      ClientMQTT.publish("esp32/otpVerificationResult", "Success");
+      String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + OldCardID + "&minggu_ke=" + String(weekNumber);;
+      HTTP.begin(tapInURL.c_str());
+      int responseCode = HTTP.POST("");
+      Serial.println(responseCode);
+      if (responseCode == 201) {
+        Serial.println("OTP Verified.");
+        LCD.clear();
+        LCD.setCursor(0, 0);
+        LCD.print(OldCardID);
+        LCD.setCursor(0, 1);
+        LCD.print("Tapped in");
+        ClientMQTT.publish("esp32/otpVerificationResult", "Success");
+      } else {
+        Serial.println("Failed to record.");
+      }
     } else {
       Serial.println("OTP Verification Failed.");
       LCD.clear();
@@ -174,12 +184,12 @@ bool checkDBRFID(String ID) {
 
 void vTaskReadCard(void* params) {
   while (1) {
-    
-    if(classID == 0 || weekNumber == 0){
+
+    if (classID == 0 || weekNumber == 0) {
       Serial.println("Class/week is invalid");
       vTaskDelay(1000 / portTICK_PERIOD_MS);
       continue;
-    } 
+    }
     if (millis() - previousMillis >= 15000) {
       previousMillis = millis();
       OldCardID = "";
@@ -211,14 +221,14 @@ void vTaskReadCard(void* params) {
 
     LCD.clear();
     if (checkDBRFID(CardID)) {
-      String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
-      HTTP.begin(tapInURL.c_str());
-      int responseCode = HTTP.POST();
-
-      if (responseCode == 200) {
+      String statusTapURL = serverName + "absensi/kelas/" + String(classID) + "/minggu/" + String(weekNumber) + "/rfid/" + CardID;
+      HTTP.begin(statusTapURL.c_str());
+      int responseCode = HTTP.GET();
+      Serial.print("Status code: ");
+      Serial.println(responseCode);
+      if (responseCode == 400) {
         lastGeneratedOTP = generateOTP();
         otpValidityTime = millis();
-
         LCD.setCursor(0, 0);
         LCD.print("ID: ");
         LCD.print(CardID);
@@ -233,11 +243,13 @@ void vTaskReadCard(void* params) {
         Serial.println("Card ID: " + CardID + ", OTP: " + lastGeneratedOTP);
         vTaskDelay(15000 / portTICK_PERIOD_MS);
         LCD.clear();
-      } else if (responseCode == 400) {
-        String tapOutURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
+      } else if (responseCode == 200) {
+        String tapOutURL = serverName + "absensi/absen-keluar?idKelas=" + String(classID) + "&rfid_mahasiswa=" + CardID + "&minggu_ke=" + String(weekNumber);
         HTTP.begin(tapOutURL.c_str());
-        int httpCode = HTTP.POST();
-        if (httpCode == 200) {
+        int httpCode = HTTP.POST("");
+        Serial.println(tapOutURL);
+        Serial.println(httpCode);
+        if (httpCode == 201) {
           Serial.println("Student tapped out");
           LCD.clear();
           LCD.setCursor(0, 0);
@@ -267,6 +279,13 @@ void vTaskReadCard(void* params) {
   }
 }
 
+void vTaskBlynkRun(void* params) {
+  while (1) {
+    Blynk.run();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
+  }
+}
+
 void setup() {
   randomSeed(analogRead(0));
   Serial.begin(115200);
@@ -285,9 +304,11 @@ void setup() {
   Serial.println("Wi-Fi Connected!");
   ClientMQTT.setServer(mqtt_server, mqtt_port);  // Setup MQTT server
   ClientMQTT.setCallback(callback);              // Setup callback function for MQTT
-  xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 2 * 1024, NULL, 3, NULL, 1);
-  xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 1 * 1024, NULL, 2, NULL, 1);
-  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 4 * 1024, NULL, 1, NULL, 0);
+  Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
+  xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 4 * 1024, NULL, 3, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 2 * 1024, NULL, 2, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskBlynkRun, "Handle Blynk Daemon Task", 2 * 1024, NULL, 3, NULL, 1);
+  xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 6 * 1024, NULL, 1, NULL, 0);
   /*
   // WiFi Manager: Secure non-hardcoded approach for wi-fi connection
   WiFiManager wm;                                                // Local initialization of WiFi Manager object

@@ -42,7 +42,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
               Text(
                 'RFID : ${viewModel.rfid_tag}',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: Colors.white),
+                style: const TextStyle(fontSize: 15, color: Colors.white),
               ),
               verticalSpaceMedium,
               TextField(

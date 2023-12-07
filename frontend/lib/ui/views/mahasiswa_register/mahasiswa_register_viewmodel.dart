@@ -45,11 +45,10 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
     try {
       await client.connect();
     } catch (e) {
-      print('Exception: $e');
+      //print('Exception: $e');
       client.disconnect();
     }
     // Subscribe to the same topic
-    print("Waiting for RFID tag");
     client.subscribe('esp32/cardDetected', MqttQos.exactlyOnce);
     listenForTopic();
     //setBusy(false);
@@ -61,7 +60,7 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
       final String message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      print('Received message:$message from topic: ${c[0].topic}>');
+      //print('Received message:$message from topic: ${c[0].topic}>');
       rfid_tag = message;
       notifyListeners();
     });

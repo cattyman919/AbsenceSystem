@@ -137,7 +137,7 @@ class KelasView extends StackedView<KelasViewModel> {
               rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
                 final waktuMasuk =
                     viewModel.formatJakartaTime(absensi.waktu_masuk!);
-                var waktuKeluar;
+                String waktuKeluar = "-";
                 if (absensi.waktu_keluar != null) {
                   waktuKeluar =
                       viewModel.formatJakartaTime(absensi.waktu_keluar!);
@@ -153,11 +153,11 @@ class KelasView extends StackedView<KelasViewModel> {
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(Center(
-                    child: Text('$waktuMasuk',
+                    child: Text(waktuMasuk,
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(Center(
-                    child: Text("${waktuKeluar ?? '-'}",
+                    child: Text(waktuKeluar,
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(

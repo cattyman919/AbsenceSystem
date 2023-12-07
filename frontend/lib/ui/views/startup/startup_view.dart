@@ -25,7 +25,7 @@ class StartupView extends StackedView<StartupViewModel> {
               style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
             ),
             verticalSpaceMedium,
-            SizedBox(
+            const SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(
@@ -34,7 +34,7 @@ class StartupView extends StackedView<StartupViewModel> {
               ),
             ),
             verticalSpaceSmall,
-            Text('Loading ...', style: TextStyle(fontSize: 16)),
+            const Text('Loading ...', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

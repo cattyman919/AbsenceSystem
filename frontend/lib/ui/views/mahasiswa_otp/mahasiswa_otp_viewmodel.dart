@@ -27,7 +27,6 @@ class MahasiswaOtpViewModel extends FormViewModel {
   }
 
   void init() async {
-    print('Init OTP');
     client = mqtt.MqttServerClient('broker.hivemq.com', clientID);
 
     client.setProtocolV311();
@@ -35,7 +34,7 @@ class MahasiswaOtpViewModel extends FormViewModel {
     try {
       await client.connect();
     } catch (e) {
-      print('Exception: $e');
+      //print('Exception: $e');
       client.disconnect();
     }
 
@@ -48,9 +47,17 @@ class MahasiswaOtpViewModel extends FormViewModel {
 
   void verifyOTP() async {
     if (otpValue!.isEmpty) {
-      _dialogService.showCustomDialog(
+      await _dialogService.showCustomDialog(
         variant: DialogType.error,
         description: 'OTP Value is Empty',
+      );
+      return;
+    }
+
+    if (otpValue!.length < 4) {
+      await _dialogService.showCustomDialog(
+        variant: DialogType.error,
+        description: 'OTP Value has to be 4 digits',
       );
       return;
     }
@@ -59,7 +66,7 @@ class MahasiswaOtpViewModel extends FormViewModel {
 
     updateStatusMessage("Publishing Message...");
 
-    publishMessage(otpValue! + "id:" + clientID, 'esp32/otpEntered');
+    publishMessage("${otpValue!}id:$clientID", 'esp32/otpEntered');
 
     updateStatusMessage("Waiting for response...");
   }
@@ -77,22 +84,21 @@ class MahasiswaOtpViewModel extends FormViewModel {
       final String message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      print('Received message:$message from topic: ${c[0].topic}>');
-      print(c[0].payload);
+      //print('Received message:$message from topic: ${c[0].topic}>');
 
-      if (message == "Success:${clientID}") {
+      if (message == "Success:$clientID") {
         _dialogService.showCustomDialog(
             variant: DialogType.success,
             description: "OTP Authentication Success");
         setBusy(false);
         rfid_tag = "";
-      } else if (message == "Failed:${clientID}") {
+      } else if (message == "Failed:$clientID") {
         _dialogService.showCustomDialog(
             variant: DialogType.error,
             description: "OTP Authentication Failed");
         setBusy(false);
         rfid_tag = "";
-      } else {
+      } else if (c[0].topic == "") {
         rfid_tag = message;
       }
       notifyListeners();

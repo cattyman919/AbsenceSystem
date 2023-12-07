@@ -14,31 +14,27 @@ class StartupView extends StackedView<StartupViewModel> {
     StartupViewModel viewModel,
     Widget? child,
   ) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            Image.asset('assets/gifs/rick-roll.gif', width: 300, height: 300),
+            const Text(
               'Absence System',
               style: TextStyle(fontSize: 40, fontWeight: FontWeight.w900),
             ),
             verticalSpaceMedium,
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Loading ...', style: TextStyle(fontSize: 16)),
-                horizontalSpaceSmall,
-                SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
-                    strokeWidth: 6,
-                  ),
-                )
-              ],
+            SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                color: Colors.black,
+                strokeWidth: 6,
+              ),
             ),
+            verticalSpaceSmall,
+            Text('Loading ...', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

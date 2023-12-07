@@ -71,11 +71,11 @@ class KelasViewModel extends ReactiveViewModel {
       setBusy(true);
       try {
         await _apiService.deleteAbsensi(id);
-        await _dialogService
-            .showCustomDialog(
-                variant: DialogType.success,
-                description: "Succesfully deleted item")
-            .whenComplete(() => setMingguKe(week));
+        setMingguKe(week);
+        setBusy(false);
+        await _dialogService.showCustomDialog(
+            variant: DialogType.success,
+            description: "Succesfully deleted item");
       } catch (e) {
         setBusy(false);
         _dialogService.showCustomDialog(

@@ -20,7 +20,8 @@ import 'package:iot/ui/dialogs/new_kelas/new_kelas_dialog.dart';
 @StackedApp(
   routes: [
     CustomRoute(page: HomeView),
-    CustomRoute(page: StartupView),
+    CustomRoute(
+        page: StartupView, transitionsBuilder: TransitionsBuilders.fadeIn),
     CustomRoute(
         page: DosenView, transitionsBuilder: TransitionsBuilders.zoomIn),
     CustomRoute(
@@ -35,7 +36,8 @@ import 'package:iot/ui/dialogs/new_kelas/new_kelas_dialog.dart';
     CustomRoute(
         page: DosenLoginView,
         transitionsBuilder: TransitionsBuilders.slideRightWithFade),
-    MaterialRoute(page: KelasView),
+    CustomRoute(
+        page: KelasView, transitionsBuilder: TransitionsBuilders.moveInLeft),
 // @stacked-route
   ],
   dependencies: [

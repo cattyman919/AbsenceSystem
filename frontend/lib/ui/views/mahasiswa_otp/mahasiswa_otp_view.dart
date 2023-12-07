@@ -71,10 +71,6 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                     : const Text('Verifikasi OTP',
                         style: TextStyle(color: Colors.white)),
               ),
-              viewModel.isBusy
-                  ? Text(viewModel.statusMessage,
-                      style: TextStyle(color: Colors.white))
-                  : const SizedBox.shrink(),
               navigationLinks(viewModel)
             ],
           ),

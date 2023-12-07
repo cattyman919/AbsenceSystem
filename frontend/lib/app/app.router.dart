@@ -7,11 +7,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i10;
 import 'package:flutter/material.dart';
-import 'package:iot/ui/views/kelasDashboard/kelasDashboard_view.dart' as _i4;
 import 'package:iot/ui/views/dosen_login/dosen_login_view.dart' as _i8;
 import 'package:iot/ui/views/dosen_register/dosen_register_view.dart' as _i7;
 import 'package:iot/ui/views/home/home_view.dart' as _i2;
 import 'package:iot/ui/views/kelas/kelas_view.dart' as _i9;
+import 'package:iot/ui/views/kelasDashboard/kelasDashboard_view.dart' as _i4;
 import 'package:iot/ui/views/mahasiswa_otp/mahasiswa_otp_view.dart' as _i6;
 import 'package:iot/ui/views/mahasiswa_register/mahasiswa_register_view.dart'
     as _i5;
@@ -101,10 +101,7 @@ class StackedRouter extends _i1.RouterBase {
         pageBuilder: (context, animation, secondaryAnimation) =>
             const _i3.StartupView(),
         settings: data,
-        transitionsBuilder: data.transition ??
-            (context, animation, secondaryAnimation, child) {
-              return child;
-            },
+        transitionsBuilder: data.transition ?? _i1.TransitionsBuilders.fadeIn,
       );
     },
     _i4.DosenView: (data) {
@@ -152,10 +149,12 @@ class StackedRouter extends _i1.RouterBase {
     },
     _i9.KelasView: (data) {
       final args = data.getArgs<KelasViewArguments>(nullOk: false);
-      return _i10.MaterialPageRoute<dynamic>(
-        builder: (context) => _i9.KelasView(
+      return _i10.PageRouteBuilder<dynamic>(
+        pageBuilder: (context, animation, secondaryAnimation) => _i9.KelasView(
             key: args.key, idKelas: args.idKelas, namaKelas: args.namaKelas),
         settings: data,
+        transitionsBuilder:
+            data.transition ?? _i1.TransitionsBuilders.moveInLeft,
       );
     },
   };

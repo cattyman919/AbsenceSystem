@@ -128,8 +128,13 @@ class KelasView extends StackedView<KelasViewModel> {
                 )),
               ],
               rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
-                final waktuMasuk = absensi.waktu_masuk;
-                final waktuKeluar = absensi.waktu_keluar;
+                final waktuMasuk =
+                    viewModel.formatJakartaTime(absensi.waktu_masuk!);
+                var waktuKeluar;
+                if (absensi.waktu_keluar != null) {
+                  waktuKeluar =
+                      viewModel.formatJakartaTime(absensi.waktu_keluar!);
+                }
 
                 void deleteAbsenCell() {
                   viewModel.deleteAbsensi(absensi.id, absensi.minggu_ke);
@@ -141,13 +146,11 @@ class KelasView extends StackedView<KelasViewModel> {
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(Center(
-                    child: Text(
-                        '${waktuMasuk!.hour}:${waktuMasuk.minute}:${waktuMasuk.second}',
+                    child: Text('$waktuMasuk',
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(Center(
-                    child: Text(
-                        "${waktuKeluar?.hour ?? '-'}:${waktuKeluar?.minute ?? '-'}:${waktuKeluar?.second ?? '-'}",
+                    child: Text("${waktuKeluar ?? '-'}",
                         style: const TextStyle(color: Colors.white)),
                   )),
                   DataCell(

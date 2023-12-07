@@ -5,6 +5,8 @@ import 'package:iot/models/absenKelas.model.dart';
 import 'package:iot/services/api_service.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:intl/intl.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class KelasViewModel extends ReactiveViewModel {
   final _apiService = locator<ApiService>();
@@ -33,6 +35,12 @@ class KelasViewModel extends ReactiveViewModel {
     absenKelas.tidakHadir.addAll(newData.tidakHadir);
     notifyListeners();
     setBusy(false);
+  }
+
+  String formatJakartaTime(DateTime utcDateTime) {
+    final jakartaTimeZone = tz.getLocation('Asia/Jakarta');
+    final jakartaDateTime = tz.TZDateTime.from(utcDateTime, jakartaTimeZone);
+    return DateFormat('HH:mm:ss').format(jakartaDateTime);
   }
 
   void deleteAbsensi(int id, int week) async {

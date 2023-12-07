@@ -17,6 +17,22 @@ export class AbsensiService {
     private mahasiswaRepository: Repository<Mahasiswa>,
   ) { }
 
+  async getKehadiranIndividu(
+    kelas: Kelas,
+    mahasiswa: Mahasiswa,
+    minggu_ke: number,
+  ) {
+    const absen = await this.absensiRepository.findOneBy({
+      kelas,
+      mahasiswa,
+      minggu_ke,
+    });
+    if (!absen) {
+      throw new HttpException('Mahasiswa belum absen', HttpStatus.BAD_REQUEST);
+    }
+    return await absen;
+  }
+
   async getKehadiran(idKelas: number, mingguKe: number) {
     const absenHadir = await this.absensiRepository
       .createQueryBuilder('a')
@@ -67,6 +83,22 @@ export class AbsensiService {
       mahasiswa,
       minggu_ke,
     });
+    const idKelas = kelas.id;
+    const idMahasiswa = mahasiswa.id;
+
+    const termasukKelas = await this.mahasiswaRepository
+      .createQueryBuilder('m')
+      .leftJoin('m.kelas', 'k')
+      .where('k.id = :idKelas', { idKelas })
+      .andWhere('m.id = :idMahasiswa', { idMahasiswa })
+      .getExists();
+
+    if (!termasukKelas) {
+      throw new HttpException(
+        'Mahasiswa tidak terdaftar dalam kelas',
+        HttpStatus.FORBIDDEN,
+      );
+    }
 
     if (absen) {
       throw new HttpException(
@@ -96,13 +128,16 @@ export class AbsensiService {
     if (absen.waktu_keluar != null) {
       throw new HttpException('Mahasiswa sudah keluar', HttpStatus.BAD_REQUEST);
     }
-    const absenBaru = await this.absensiRepository.findOneBy({
-      kelas,
-      mahasiswa,
-      minggu_ke,
-    });
-    absenBaru.waktu_keluar = moment().tz('Asia/Jakarta').toDate();
-    return await this.absensiRepository.save(absenBaru);
+    const waktu_keluar = new Date();
+
+    await this.absensiRepository.update(
+      { kelas, mahasiswa, minggu_ke },
+      { waktu_keluar },
+    );
+    const nama = mahasiswa.nama;
+    return {
+      nama,
+    };
   }
 
   create(createAbsensiDto: CreateAbsensiDto) {
@@ -130,4 +165,8 @@ export class AbsensiService {
 
     return await this.absensiRepository.remove(absen);
   }
+
+  convertUtcToJakarta = (utcDate) => {
+    return moment(utcDate).tz('Asia/Jakarta').toDate();
+  };
 }

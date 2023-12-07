@@ -25,7 +25,7 @@ export class Kelas {
 
   @ManyToMany(() => Mahasiswa, (mahasiswa) => mahasiswa.kelas, {
     onUpdate: 'CASCADE',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   })
   mahasiswa: Mahasiswa[];
 }

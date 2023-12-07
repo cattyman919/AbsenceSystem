@@ -18,7 +18,6 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
     Widget? child,
   ) {
     return Scaffold(
-
       backgroundColor: Colors.grey[850],
       appBar: AppBar(
         title: const Text('OTP Verification'),
@@ -84,7 +83,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
   }
 
   @override
-  void onViewModelReady(MahasiswaOtpViewModel viewModel) {
+  void onViewModelReady(MahasiswaOtpViewModel viewModel) async {
     viewModel.init();
     syncFormWithViewModel(viewModel);
   }

@@ -4,12 +4,15 @@ import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
 import 'package:iot/app/app.router.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
   setupDialogUi();
   setupBottomSheetUi();
+  tz.initializeTimeZones();
   runApp(const MainApp());
 }
 

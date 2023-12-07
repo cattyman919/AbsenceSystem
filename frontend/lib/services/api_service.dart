@@ -28,7 +28,6 @@ class ApiService {
       ).timeout(timeoutDuration);
 
       final responseJson = json.decode(response.body);
-      print(responseJson['username']);
       if (response.statusCode == 201) {
         await storage.write(
           key: 'username',
@@ -97,7 +96,6 @@ class ApiService {
           )
           .timeout(timeoutDuration);
       final body = jsonDecode(response.body);
-      print(body);
 
       absenKelas = AbsenKelas.fromJson(body);
 
@@ -113,7 +111,6 @@ class ApiService {
           .delete(Uri.parse('$currentURL/absensi/$id'))
           .timeout(timeoutDuration);
       final body = jsonDecode(response.body);
-      print(response.statusCode);
       return body;
     } catch (e) {
       rethrow;

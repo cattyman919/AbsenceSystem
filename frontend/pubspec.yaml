@@ -13,6 +13,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   intl: ^0.18.1
   mqtt_client: ^10.0.0
+  pull_to_refresh_flutter3: ^2.0.2
   stacked: ^3.4.0
   stacked_services: ^1.1.0
   supabase_flutter: ^1.10.25

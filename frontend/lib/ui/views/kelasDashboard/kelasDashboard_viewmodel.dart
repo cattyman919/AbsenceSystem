@@ -4,6 +4,7 @@ import 'package:iot/app/app.locator.dart';
 import 'package:iot/app/app.router.dart';
 import 'package:iot/models/kelas.model.dart';
 import 'package:iot/services/api_service.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 
@@ -13,33 +14,32 @@ class DosenViewModel extends BaseViewModel {
   final _bottomSheetService = locator<BottomSheetService>();
   final _navigationService = locator<NavigationService>();
 
-  late final List<Kelas> _kelas;
+  final RefreshController refreshController =
+      RefreshController(initialRefresh: false);
+
+  late final List<Kelas> _kelas = List.empty(growable: true);
   List<Kelas> get kelas => _kelas;
 
   void init() async {
-    setBusy(true);
-    _kelas = await _apiService.fetchKelas();
-    setBusy(false);
+    updateData();
   }
 
   void updateData() async {
+    setBusy(true);
     _kelas.clear();
     var updatedKelas = await _apiService.fetchKelas();
     _kelas.addAll(updatedKelas);
+    setBusy(false);
     notifyListeners();
-
   }
 
   void showDialogKelasBaru() async {
-    await _dialogService
-        .showCustomDialog(
-          variant: DialogType.newKelas,
-        )
-        .whenComplete(updateData);
-  }
+    bool confirmationAddedKelas = (await _dialogService.showCustomDialog(
+      variant: DialogType.newKelas,
+    ))!
+        .confirmed;
 
-  void goToKelas(int id, String nama) {
-    _navigationService.navigateToKelasView(idKelas: id, namaKelas: nama);
+    if (confirmationAddedKelas) updateData();
   }
 
   void deleteKelas(int id) async {
@@ -54,18 +54,26 @@ class DosenViewModel extends BaseViewModel {
       try {
         setBusy(true);
         await _apiService.deleteKelas(id);
-        _dialogService
-            .showCustomDialog(
-                variant: DialogType.success,
-                description: "Succesfully deleted item")
-            .whenComplete(updateData);
-
+        updateData();
+        setBusy(false);
+        _dialogService.showCustomDialog(
+            variant: DialogType.success,
+            description: "Succesfully deleted item");
       } catch (e) {
         setBusy(false);
         _dialogService.showCustomDialog(
             variant: DialogType.error, description: "Delete item failed");
       }
-      setBusy(false);
     }
+  }
+
+  void onRefresh() async {
+    updateData();
+    // if failed,use refreshFailed()
+    refreshController.refreshCompleted();
+  }
+
+  void goToKelas(int id, String nama) {
+    _navigationService.navigateToKelasView(idKelas: id, namaKelas: nama);
   }
 }

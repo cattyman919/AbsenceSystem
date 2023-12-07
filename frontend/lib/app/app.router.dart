@@ -7,7 +7,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:flutter/material.dart' as _i10;
 import 'package:flutter/material.dart';
-import 'package:iot/ui/views/dosen/dosen_view.dart' as _i4;
+import 'package:iot/ui/views/kelasDashboard/kelasDashboard_view.dart' as _i4;
 import 'package:iot/ui/views/dosen_login/dosen_login_view.dart' as _i8;
 import 'package:iot/ui/views/dosen_register/dosen_register_view.dart' as _i7;
 import 'package:iot/ui/views/home/home_view.dart' as _i2;

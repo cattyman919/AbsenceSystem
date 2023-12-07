@@ -12,7 +12,6 @@ class DosenLoginViewModel extends FormViewModel {
   final _dialogService = locator<DialogService>();
 
   void init() {
-    print("Init Login");
     usernameValue = "admin";
     passwordValue = "admin";
   }
@@ -20,9 +19,7 @@ class DosenLoginViewModel extends FormViewModel {
   void loginDosen() async {
     setBusy(true);
     try {
-      print("Login");
       await _apiService.login(usernameValue!, passwordValue!);
-      print("Finished Login");
       //clearForm();
       setBusy(false);
       _dialogService
@@ -43,6 +40,6 @@ class DosenLoginViewModel extends FormViewModel {
   }
 
   Future<void> goToOTP() async {
-    await _navigationService.navigateTo(Routes.mahasiswaOtpView);
+    _navigationService.popUntil((route) => route.isFirst);
   }
 }

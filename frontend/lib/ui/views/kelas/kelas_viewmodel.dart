@@ -3,22 +3,36 @@ import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
 import 'package:iot/models/absenKelas.model.dart';
 import 'package:iot/services/api_service.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class KelasViewModel extends ReactiveViewModel {
+  final int idKelas;
+  KelasViewModel(this.idKelas);
+
   final _apiService = locator<ApiService>();
   final _dialogService = locator<DialogService>();
 
-  final int idKelas;
-
-  List<int> mingguOptions = [1, 2, 3, 4, 5, 6, 7]; // Sesuaikan dengan data Anda
+  List<int> mingguOptions = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ]; // Sesuaikan dengan data Anda
 
   final TextEditingController mingguOptionsController = TextEditingController();
 
-  KelasViewModel(this.idKelas);
+  int get minggu_ke => int.parse(mingguOptionsController.text.substring(10));
+
+  final RefreshController refreshController =
+      RefreshController(initialRefresh: false);
 
   late final AbsenKelas absenKelas = AbsenKelas(hadir: [], tidakHadir: []);
 
@@ -33,8 +47,9 @@ class KelasViewModel extends ReactiveViewModel {
     var newData = await _apiService.fetchAbsenKelas(idKelas, value!);
     absenKelas.hadir.addAll(newData.hadir);
     absenKelas.tidakHadir.addAll(newData.tidakHadir);
-    notifyListeners();
     setBusy(false);
+
+    notifyListeners();
   }
 
   String formatJakartaTime(DateTime utcDateTime) {
@@ -56,19 +71,22 @@ class KelasViewModel extends ReactiveViewModel {
       setBusy(true);
       try {
         await _apiService.deleteAbsensi(id);
-        setBusy(false);
-        _dialogService
+        await _dialogService
             .showCustomDialog(
                 variant: DialogType.success,
                 description: "Succesfully deleted item")
-            .whenComplete(() {
-          setMingguKe(week);
-        });
+            .whenComplete(() => setMingguKe(week));
       } catch (e) {
         setBusy(false);
         _dialogService.showCustomDialog(
             variant: DialogType.error, description: "Delete item failed");
       }
     }
+  }
+
+  void onRefresh() async {
+    setMingguKe(minggu_ke);
+    // if failed,use refreshFailed()
+    refreshController.refreshCompleted();
   }
 }

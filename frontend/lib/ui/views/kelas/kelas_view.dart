@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iot/models/absenKelas.model.dart';
 import 'package:iot/models/mahasiswa.model.dart';
 import 'package:iot/ui/common/ui_helpers.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:stacked/stacked.dart';
 
 import 'kelas_viewmodel.dart';
@@ -25,51 +26,57 @@ class KelasView extends StackedView<KelasViewModel> {
         title: Text(namaKelas), // Class name in the AppBar
         backgroundColor: Colors.grey[900],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            DropdownMenu<int>(
-              onSelected: viewModel.setMingguKe,
-              initialSelection: 1,
-              textStyle: const TextStyle(color: Colors.white),
-              menuStyle: MenuStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll<Color>(Colors.grey[900]!),
+      body: SmartRefresher(
+        controller: viewModel.refreshController,
+        enablePullDown: true,
+        onRefresh: viewModel.onRefresh,
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              DropdownMenu<int>(
+                controller: viewModel.mingguOptionsController,
+                onSelected: viewModel.setMingguKe,
+                initialSelection: 1,
+                textStyle: const TextStyle(color: Colors.white),
+                menuStyle: MenuStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Colors.grey[900]!),
+                ),
+                inputDecorationTheme: const InputDecorationTheme(
+                  filled: true,
+                  floatingLabelStyle: TextStyle(color: Colors.white),
+                  border: InputBorder.none,
+                  fillColor: Color.fromARGB(255, 29, 29, 29),
+                ),
+                dropdownMenuEntries:
+                    viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
+                  return DropdownMenuEntry<int>(
+                      value: e,
+                      label: 'Minggu ke-$e',
+                      style: MenuItemButton.styleFrom(
+                        backgroundColor: Colors.grey[900],
+                        foregroundColor: Colors.white,
+                      ));
+                }).toList(),
               ),
-              inputDecorationTheme: const InputDecorationTheme(
-                filled: true,
-                floatingLabelStyle: TextStyle(color: Colors.white),
-                border: InputBorder.none,
-                fillColor: Color.fromARGB(255, 29, 29, 29),
+              verticalSpaceMedium,
+              const Text(
+                'Hadir',
+                style: TextStyle(color: Colors.white, fontSize: 25),
               ),
-              dropdownMenuEntries:
-                  viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
-                return DropdownMenuEntry<int>(
-                    value: e,
-                    label: 'Minggu ke-$e',
-                    style: MenuItemButton.styleFrom(
-                      backgroundColor: Colors.grey[900],
-                      foregroundColor: Colors.white,
-                    ));
-              }).toList(),
-            ),
-            verticalSpaceMedium,
-            const Text(
-              'Hadir',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
-            verticalSpaceMedium,
-            viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
-            verticalSpaceMedium,
-            const Text(
-              'Tidak Hadir',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
-            verticalSpaceMedium,
-            viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
-          ]),
+              verticalSpaceMedium,
+              viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
+              verticalSpaceMedium,
+              const Text(
+                'Tidak Hadir',
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+              verticalSpaceMedium,
+              viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
+            ]),
+          ),
         ),
       ),
     );
@@ -232,7 +239,7 @@ class KelasView extends StackedView<KelasViewModel> {
                 padding: EdgeInsets.only(top: 20),
                 child: Text(
                   "Fetching data...",
-                  style: TextStyle(color: Colors.grey, fontSize: 17),
+                  style: TextStyle(color: Colors.white, fontSize: 17),
                 )),
           ],
         ));

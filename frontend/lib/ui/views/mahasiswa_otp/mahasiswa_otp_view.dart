@@ -72,7 +72,8 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                         style: TextStyle(color: Colors.white)),
               ),
               viewModel.isBusy
-                  ? Text(viewModel.statusMessage)
+                  ? Text(viewModel.statusMessage,
+                      style: TextStyle(color: Colors.white))
                   : const SizedBox.shrink(),
               navigationLinks(viewModel)
             ],

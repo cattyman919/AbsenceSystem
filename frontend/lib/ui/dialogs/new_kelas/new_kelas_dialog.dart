@@ -111,7 +111,7 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
               alignment: Alignment.center,
               child: TextButton(
                   style: TextButton.styleFrom(),
-                  onPressed: () => completer(DialogResponse(confirmed: true)),
+                  onPressed: () => completer(DialogResponse(confirmed: false)),
                   child: const Text(
                     'Cancel',
                     style: TextStyle(

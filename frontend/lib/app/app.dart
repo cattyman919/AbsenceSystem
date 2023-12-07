@@ -5,7 +5,7 @@ import 'package:iot/ui/views/startup/startup_view.dart';
 import 'package:stacked/stacked.dart';
 import 'package:stacked/stacked_annotations.dart';
 import 'package:stacked_services/stacked_services.dart';
-import 'package:iot/ui/views/dosen/dosen_view.dart';
+import 'package:iot/ui/views/kelasDashboard/kelasDashboard_view.dart';
 import 'package:iot/services/api_service.dart';
 import 'package:iot/ui/views/mahasiswa_register/mahasiswa_register_view.dart';
 import 'package:iot/ui/views/mahasiswa_otp/mahasiswa_otp_view.dart';

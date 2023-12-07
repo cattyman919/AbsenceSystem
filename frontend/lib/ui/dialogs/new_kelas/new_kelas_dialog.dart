@@ -26,7 +26,7 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
   ) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[800],
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
@@ -40,11 +40,13 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Buat Kelas Baru',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w900,
+                      const Center(
+                        child: Text(
+                          'Buat Kelas Baru',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                       if (request.description != null) ...[
@@ -66,8 +68,18 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
             ),
             verticalSpaceMedium,
             TextField(
-              onChanged: (value) {},
-              decoration: InputDecoration(labelText: "Nama kelas"),
+              controller: viewModel.namaKelasController,
+              decoration: const InputDecoration(
+                  labelText: 'Nama',
+                  labelStyle: TextStyle(color: Colors.white70, fontSize: 15),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white70),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                  border: OutlineInputBorder()),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
               keyboardType: TextInputType.name,
             ),
             verticalSpaceMedium,
@@ -81,15 +93,17 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size.fromHeight(50)),
-                    onPressed: () => completer(DialogResponse(confirmed: true)),
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ))),
+                    onPressed: () => viewModel.createNewKelas(completer),
+                    child: viewModel.isBusy
+                        ? loadingSpinnerSmall()
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ))),
             verticalSpaceSmall,
             Container(
               height: 50,
@@ -98,7 +112,7 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
               child: TextButton(
                   style: TextButton.styleFrom(),
                   onPressed: () => completer(DialogResponse(confirmed: true)),
-                  child: Text(
+                  child: const Text(
                     'Cancel',
                     style: TextStyle(
                       color: Colors.red,
@@ -116,4 +130,14 @@ class NewKelasDialog extends StackedView<NewKelasDialogModel> {
   @override
   NewKelasDialogModel viewModelBuilder(BuildContext context) =>
       NewKelasDialogModel();
+
+  Widget loadingSpinnerSmall() {
+    return const SizedBox(
+        width: 16,
+        height: 16,
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 3,
+        ));
+  }
 }

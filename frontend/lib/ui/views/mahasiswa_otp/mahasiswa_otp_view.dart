@@ -18,57 +18,73 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.only(left: 25.0, right: 25.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              "OTP",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            verticalSpaceMedium,
-            Text(
-              'RFID : ${123}',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15),
-            ),
-            verticalSpaceMedium,
-            TextField(
-              controller: otpController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: 'Kode OTP',
-                border: OutlineInputBorder(),
+      backgroundColor: Colors.grey[850],
+      appBar: AppBar(
+        title: const Text('OTP Verification'),
+        backgroundColor: Colors.grey[900],
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text(
+                "OTP",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
-            ),
-            verticalSpaceMedium,
-            ElevatedButton(
-              onPressed: viewModel.verifyOTP,
-              child: viewModel.isBusy
-                  ? loadingSpinnerSmall()
-                  : Text('Verifikasi OTP'),
-            ),
-            viewModel.isBusy
-                ? Text(viewModel.statusMessage)
-                : SizedBox.shrink(),
-            TextButton(
-                onPressed: viewModel.goToRegister,
-                child: Text("Register Mahasiswa")),
-            TextButton(
-                onPressed: viewModel.goToDosenLogin,
-                child: Text("Login as Dosen")),
-          ],
+              verticalSpaceMedium,
+              Text(
+                'RFID : ${viewModel.rfid_tag}',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, color: Colors.white),
+              ),
+              verticalSpaceMedium,
+              TextField(
+                controller: otpController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                    labelText: 'Enter OTP',
+                    labelStyle: TextStyle(color: Colors.white70, fontSize: 20),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white70),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                    border: OutlineInputBorder()),
+                style: const TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              verticalSpaceMedium,
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(200, 40),
+                ),
+                onPressed: viewModel.verifyOTP,
+                child: viewModel.isBusy
+                    ? loadingSpinnerSmall()
+                    : const Text('Verifikasi OTP',
+                        style: TextStyle(color: Colors.white)),
+              ),
+              viewModel.isBusy
+                  ? Text(viewModel.statusMessage)
+                  : const SizedBox.shrink(),
+              navigationLinks(viewModel)
+            ],
+          ),
         ),
       ),
     );
   }
 
   @override
-  void onViewModelReady(MahasiswaOtpViewModel viewModel) {
+  void onViewModelReady(MahasiswaOtpViewModel viewModel) async {
+    viewModel.init();
     syncFormWithViewModel(viewModel);
   }
 
@@ -86,5 +102,27 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
           color: Colors.white,
           strokeWidth: 3,
         ));
+  }
+
+  Widget navigationLinks(MahasiswaOtpViewModel viewModel) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: Column(
+        children: [
+          actionLink('Login as Dosen', viewModel.goToDosenLogin),
+          actionLink('Register Mahasiswa', viewModel.goToRegister),
+        ],
+      ),
+    );
+  }
+
+  Widget actionLink(String text, VoidCallback action) {
+    return TextButton(
+      onPressed: action,
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.blueAccent),
+      ),
+    );
   }
 }

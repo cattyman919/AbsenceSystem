@@ -33,6 +33,17 @@ export class AbsensiController {
     return this.absensiService.getKehadiran(idKelas, mingguKe);
   }
 
+  @Get('/kelas/:idKelas/minggu/:mingguKe/rfid/:rfid')
+  async getKehadiranIndividu(
+    @Param('idKelas') idKelas: number,
+    @Param('mingguKe') mingguKe: number,
+    @Param('rfid') rfid: string,
+  ): Promise<any> {
+    const kelas = await this.kelasService.findOne(idKelas);
+    const mahasiswa = await this.mahasiswaService.findOneByRFID(rfid);
+    return this.absensiService.getKehadiranIndividu(kelas, mahasiswa, mingguKe);
+  }
+
   @Post('absen-masuk')
   async absenMasuk(
     @Query('idKelas') idKelas: number,
@@ -52,6 +63,7 @@ export class AbsensiController {
   ) {
     const kelas = await this.kelasService.findOne(idKelas);
     const mahasiswa = await this.mahasiswaService.findOneByRFID(rfid_mahasiswa);
+
 
     return await this.absensiService.absenKeluar(kelas, mahasiswa, minggu_ke);
   }

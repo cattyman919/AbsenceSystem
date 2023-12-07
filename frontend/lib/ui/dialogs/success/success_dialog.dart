@@ -88,7 +88,7 @@ class SuccessDialog extends StackedView<SuccessDialogModel> {
                 width: double.infinity,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.green,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Text(

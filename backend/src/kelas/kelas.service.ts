@@ -28,7 +28,8 @@ export class KelasService {
     return `This action updates a #${id} kela`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} kela`;
+  async remove(id: number) {
+    const kelas = await this.kelasRepository.findOneBy({ id });
+    return await this.kelasRepository.remove(kelas);
   }
 }

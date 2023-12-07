@@ -20,100 +20,204 @@ class KelasView extends StackedView<KelasViewModel> {
     Widget? child,
   ) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      body: Container(
-        padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            '$namaKelas',
-            textScaleFactor: 2,
-          ),
-          verticalSpaceMedium,
-          DropdownMenu<int>(
-            onSelected: viewModel.setMingguKe,
-            initialSelection: 1,
-            dropdownMenuEntries:
-                viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
-              return DropdownMenuEntry<int>(
-                value: e,
-                label: 'Minggu ke-${e}',
-                style: MenuItemButton.styleFrom(
-                    // foregroundColor: color.color,
-                    ),
-              );
-            }).toList(),
-            textStyle: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          verticalSpaceMedium,
-          Text(
-            'Hadir',
-            style: TextStyle(fontWeight: FontWeight.bold),
-            textScaleFactor: 1.3,
-          ),
-          verticalSpaceSmall,
-          viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
-          verticalSpaceMedium,
-          Text(
-            'Tidak Hadir',
-            style: TextStyle(fontWeight: FontWeight.bold),
-            textScaleFactor: 1.3,
-          ),
-          viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
-        ]),
+      backgroundColor: Colors.grey[850], // Moderately dark background
+      appBar: AppBar(
+        title: Text(namaKelas), // Class name in the AppBar
+        backgroundColor: Colors.grey[900],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            DropdownMenu<int>(
+              onSelected: viewModel.setMingguKe,
+              initialSelection: 1,
+              textStyle: const TextStyle(color: Colors.white),
+              menuStyle: MenuStyle(
+                backgroundColor:
+                    MaterialStatePropertyAll<Color>(Colors.grey[900]!),
+              ),
+              inputDecorationTheme: const InputDecorationTheme(
+                filled: true,
+                floatingLabelStyle: TextStyle(color: Colors.white),
+                border: InputBorder.none,
+                fillColor: Color.fromARGB(255, 29, 29, 29),
+              ),
+              dropdownMenuEntries:
+                  viewModel.mingguOptions.map<DropdownMenuEntry<int>>((e) {
+                return DropdownMenuEntry<int>(
+                    value: e,
+                    label: 'Minggu ke-$e',
+                    style: MenuItemButton.styleFrom(
+                      backgroundColor: Colors.grey[900],
+                      foregroundColor: Colors.white,
+                    ));
+              }).toList(),
+            ),
+            verticalSpaceMedium,
+            const Text(
+              'Hadir',
+              style: TextStyle(color: Colors.white, fontSize: 25),
+            ),
+            verticalSpaceMedium,
+            viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
+            verticalSpaceMedium,
+            const Text(
+              'Tidak Hadir',
+              style: TextStyle(color: Colors.white, fontSize: 25),
+            ),
+            verticalSpaceMedium,
+            viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
+          ]),
+        ),
       ),
     );
   }
 
   Widget hadirKelas(KelasViewModel viewModel) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(
-        showBottomBorder: true,
-        columns: [
-          DataColumn(label: Text('Nama')),
-          DataColumn(label: Text('Waktu Masuk')),
-          DataColumn(label: Text('Waktu Keluar')),
-          DataColumn(label: Text('Action')),
-        ],
-        rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
-          final waktu_masuk = absensi.waktu_masuk;
-          final waktu_keluar = absensi.waktu_keluar;
-          return DataRow(cells: [
-            DataCell(Text(absensi.mahasiswa!.nama!)),
-            DataCell(Text(
-                '${waktu_masuk!.hour}:${waktu_masuk!.minute}:${waktu_masuk.second}')),
-            DataCell(Text(
-                "${waktu_keluar?.hour ?? '-'}:${waktu_keluar?.minute ?? '-'}:${waktu_keluar?.second ?? '-'}")),
-            DataCell(Text('Delete')),
-          ]);
-        }).toList(),
-      ),
-    );
+    return viewModel.absenKelas.hadir.isEmpty
+        ? const Center(
+            child: Text(
+              'Kosong',
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
+          )
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: DataTable(
+              border: TableBorder.all(
+                  borderRadius: BorderRadius.circular(5), color: Colors.grey),
+              showBottomBorder: true,
+              columns: const [
+                DataColumn(
+                    label: Center(
+                  child: Text('Nama',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
+                DataColumn(
+                    label: Center(
+                  child: Text('Waktu Masuk',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
+                DataColumn(
+                    label: Center(
+                  child: Text('Waktu Keluar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
+                DataColumn(
+                    label: Center(
+                  child: Text('Action',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      )),
+                )),
+              ],
+              rows: viewModel.absenKelas.hadir.map<DataRow>((Hadir absensi) {
+                final waktuMasuk =
+                    viewModel.formatJakartaTime(absensi.waktu_masuk!);
+                var waktuKeluar;
+                if (absensi.waktu_keluar != null) {
+                  waktuKeluar =
+                      viewModel.formatJakartaTime(absensi.waktu_keluar!);
+                }
+
+                void deleteAbsenCell() {
+                  viewModel.deleteAbsensi(absensi.id, absensi.minggu_ke);
+                }
+
+                return DataRow(cells: [
+                  DataCell(Center(
+                    child: Text(absensi.mahasiswa!.nama!,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text('$waktuMasuk',
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text("${waktuKeluar ?? '-'}",
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(
+                    Center(
+                      child: TextButton(
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                        onPressed: deleteAbsenCell,
+                        child: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                          size: 22,
+                        ),
+                      ),
+                    ),
+                  ),
+                ]);
+              }).toList(),
+            ),
+          );
   }
 
   Widget tidakHadirKelas(KelasViewModel viewModel) {
-    return SingleChildScrollView(
-      child: DataTable(
-        showBottomBorder: true,
-        columns: [
-          DataColumn(label: Text('Nama')),
-          DataColumn(label: Text('NPM')),
-        ],
-        rows:
-            viewModel.absenKelas.tidakHadir.map<DataRow>((Mahasiswa mahasiswa) {
-          return DataRow(cells: [
-            DataCell(Text(mahasiswa.nama!)),
-            DataCell(Text(mahasiswa.npm!)),
-          ]);
-        }).toList(),
-      ),
-    );
+    return viewModel.absenKelas.tidakHadir.isEmpty
+        ? const Center(
+            child: Text(
+              'Kosong',
+              style: TextStyle(color: Colors.white, fontSize: 22),
+            ),
+          )
+        : SingleChildScrollView(
+            child: DataTable(
+              showBottomBorder: true,
+              border: TableBorder.all(
+                  borderRadius: BorderRadius.circular(5), color: Colors.grey),
+              columns: const [
+                DataColumn(
+                    label: Center(
+                        child: Text('Nama',
+                            style: TextStyle(color: Colors.white)))),
+                DataColumn(
+                    label: Center(
+                        child: Text('NPM',
+                            style: TextStyle(color: Colors.white)))),
+              ],
+              rows: viewModel.absenKelas.tidakHadir
+                  .map<DataRow>((Mahasiswa mahasiswa) {
+                return DataRow(cells: [
+                  DataCell(Center(
+                    child: Text(mahasiswa.nama!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                  DataCell(Center(
+                    child: Text(mahasiswa.npm!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white)),
+                  )),
+                ]);
+              }).toList(),
+            ),
+          );
   }
 
   Widget loadingSpinner() {
     return Container(
         alignment: Alignment.center,
-        padding: EdgeInsetsDirectional.only(top: 30),
+        padding: const EdgeInsetsDirectional.only(top: 30),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -121,12 +225,15 @@ class KelasView extends StackedView<KelasViewModel> {
                 width: 64,
                 height: 64,
                 child: CircularProgressIndicator(
-                  color: Colors.black,
+                  color: Colors.grey,
                   strokeWidth: 3,
                 )),
             Padding(
-                child: Text("Fetching data..."),
-                padding: EdgeInsets.only(top: 20)),
+                padding: EdgeInsets.only(top: 20),
+                child: Text(
+                  "Fetching data...",
+                  style: TextStyle(color: Colors.grey, fontSize: 17),
+                )),
           ],
         ));
   }

@@ -6,13 +6,18 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart' as mqtt;
 import 'package:stacked/stacked.dart';
 import 'package:stacked_services/stacked_services.dart';
+import 'package:uuid/uuid.dart';
 
 class MahasiswaOtpViewModel extends FormViewModel {
   final _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
+  final String uuid = Uuid().v4();
 
-  final client = mqtt.MqttServerClient('broker.hivemq.com', '');
+  late final mqtt.MqttServerClient client;
+
   String _statusMessage = '';
+
+  String rfid_tag = '';
 
   String get statusMessage => _statusMessage;
 
@@ -29,9 +34,26 @@ class MahasiswaOtpViewModel extends FormViewModel {
     notifyListeners(); // Notify the UI about the update
   }
 
-  void verifyOTP() async {
+  void init() async {
+    client = mqtt.MqttServerClient('broker.hivemq.com', uuid);
+
     client.setProtocolV311();
 
+    try {
+      await client.connect();
+    } catch (e) {
+      print('Exception: $e');
+      client.disconnect();
+    }
+
+    // Subscribe to the same topic
+    client.subscribe('esp32/cardDetected', MqttQos.exactlyOnce);
+    client.subscribe('esp32/otpVerificationResult', MqttQos.exactlyOnce);
+
+    listenForVerificationResult();
+  }
+
+  void verifyOTP() async {
     if (otpValue!.isEmpty) {
       _dialogService.showCustomDialog(
         variant: DialogType.error,
@@ -42,22 +64,12 @@ class MahasiswaOtpViewModel extends FormViewModel {
 
     setBusy(true);
     //updateStatusMessage("Connecting to MQTT...");
-    try {
-      await client.connect();
-    } catch (e) {
-      print('Exception: $e');
-      client.disconnect();
-    }
-
-    // Subscribe to the same topic
-    client.subscribe('esp32/otpResponse', MqttQos.exactlyOnce);
 
     updateStatusMessage("Publishing Message...");
-    publishMessage(otpValue!, 'esp32/otpRequest');
+
+    publishMessage(otpValue!, 'esp32/otpEntered');
 
     updateStatusMessage("Waiting for response...");
-    listenForVerificationResult();
-    setBusy(false);
 
     // Call publishMessage with the data you want to send
   }
@@ -71,40 +83,30 @@ class MahasiswaOtpViewModel extends FormViewModel {
   }
 
   void listenForVerificationResult() async {
-    List<MqttReceivedMessage<MqttMessage>> response =
-        await client.updates!.first;
-    final MqttPublishMessage recMess =
-        response[0].payload as MqttPublishMessage;
-    final String message =
-        MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+    client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+      final String message =
+          MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-    print('Received message:$message from topic: ${response[0].topic}>');
-    if (message == "Success") {
-      _dialogService.showCustomDialog(
-          variant: DialogType.success,
-          description: "OTP Authentication Success");
-    } else if (message == "Failed") {
-      _dialogService.showCustomDialog(
-          variant: DialogType.error, description: "OTP Authentication Failed");
-    }
-    // client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-    //   final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
-    //   final String message =
-    //       MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+      print('Received message:$message from topic: ${c[0].topic}>');
 
-    //   print('Received message:$message from topic: ${c[0].topic}>');
-
-    //   if (message == "Success") {
-    //     _dialogService.showCustomDialog(
-    //         variant: DialogType.success,
-    //         description: "OTP Authentication Success");
-    //   } else if (message == "Failed") {
-    //     _dialogService.showCustomDialog(
-    //         variant: DialogType.error,
-    //         description: "OTP Authentication Failed");
-    //   }
-
-    //   // Handle the message (e.g., update UI)
-    // });
+      if (message == "Success") {
+        _dialogService.showCustomDialog(
+            variant: DialogType.success,
+            description: "OTP Authentication Success");
+        setBusy(false);
+        rfid_tag = "";
+      } else if (message == "Failed") {
+        _dialogService.showCustomDialog(
+            variant: DialogType.error,
+            description: "OTP Authentication Failed");
+        setBusy(false);
+        rfid_tag = "";
+      } else {
+        rfid_tag = message;
+      }
+      notifyListeners();
+      // Handle the message (e.g., update UI)
+    });
   }
 }

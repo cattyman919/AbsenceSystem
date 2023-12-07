@@ -17,9 +17,15 @@ export class Kelas {
   @Column({ length: 255 })
   nama: string;
 
-  @OneToMany(() => Absensi, (absensi) => absensi.kelas)
+  @OneToMany(() => Absensi, (absensi) => absensi.kelas, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  })
   absensi: Absensi[];
 
-  @ManyToMany(() => Mahasiswa, (mahasiswa) => mahasiswa.kelas)
+  @ManyToMany(() => Mahasiswa, (mahasiswa) => mahasiswa.kelas, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   mahasiswa: Mahasiswa[];
 }

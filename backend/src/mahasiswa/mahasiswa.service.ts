@@ -52,7 +52,11 @@ export class MahasiswaService {
   }
 
   async findOneByRFID(rfid_tag: string) {
-    return await this.mahasiswaRepository.findOneBy({ rfid_tag });
+    const absen = await this.mahasiswaRepository.findOneBy({ rfid_tag });
+    if (!absen) {
+      throw new HttpException('RFID not Found', HttpStatus.NOT_FOUND);
+    }
+    return absen;
   }
 
   update(id: number, updateMahasiswaDto: UpdateMahasiswaDto) {

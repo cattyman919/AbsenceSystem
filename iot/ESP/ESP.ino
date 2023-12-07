@@ -12,6 +12,7 @@
 #include <PubSubClient.h>
 #include <HTTPClient.h>
 #include <BlynkSimpleEsp32.h>
+#include <ArduinoJson.h>
 
 //************************************************************************
 #define SS_PIN 5    // GPIO5
@@ -29,12 +30,12 @@ static int lcdColumns = 18;                               // 18 columns LCD
 static int lcdRows = 2;                                   // 2 rows LCD
 static LiquidCrystal_I2C LCD(0x27, lcdColumns, lcdRows);  // LCD object
 const char* ESP_AP_PASSWORD = "AP-ESP32";                 // Customizable ESP AP password
-const char* SSID = "nand";
-const char* PASSWORD = "GIGACHAD";
+const char* SSID = "ADJUST-SSID";
+const char* PASSWORD = "ADJUST-PASSWORD";
 const char* mqtt_server = "broker.hivemq.com";
 const int mqtt_port = 1883;
 const static String serverName = "https://absence-system.vercel.app/";
-const static int interval = 30000;
+const static int interval = 15000;
 static String lastGeneratedOTP = "";
 unsigned long otpValidityTime = 0;
 static int classID = 0;     // Default IDLE machine
@@ -82,17 +83,25 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   if (String(topic) == "esp32/otpEntered") {
     if (verifyOTP(receivedMsg)) {
-      String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + OldCardID + "&minggu_ke=" + String(weekNumber);;
+      String tapInURL = serverName + "absensi/absen-masuk?idKelas=" + String(classID) + "&rfid_mahasiswa=" + OldCardID + "&minggu_ke=" + String(weekNumber);
+      ;
       HTTP.begin(tapInURL.c_str());
       int responseCode = HTTP.POST("");
       Serial.println(responseCode);
       if (responseCode == 201) {
+        String response = HTTP.getString();
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, response);
+
+        String name = doc["mahasiswa"]["nama"].as<String>();
+        String NPM = doc["mahasiswa"]["npm"].as<String>();
         Serial.println("OTP Verified.");
         LCD.clear();
         LCD.setCursor(0, 0);
-        LCD.print(OldCardID);
+        LCD.print(name);
         LCD.setCursor(0, 1);
-        LCD.print("Tapped in");
+        LCD.print(NPM);
         ClientMQTT.publish("esp32/otpVerificationResult", "Success");
       } else {
         Serial.println("Failed to record.");
@@ -287,7 +296,7 @@ void vTaskBlynkRun(void* params) {
 }
 
 void setup() {
-  randomSeed(analogRead(0));
+  randomSeed(millis());
   Serial.begin(115200);
   while (!Serial)
     ;
@@ -309,34 +318,8 @@ void setup() {
   xTaskCreatePinnedToCore(vTaskWiFiConnection, "Handle Wi-Fi Connection Task", 2 * 1024, NULL, 2, NULL, 1);
   xTaskCreatePinnedToCore(vTaskBlynkRun, "Handle Blynk Daemon Task", 2 * 1024, NULL, 3, NULL, 1);
   xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 6 * 1024, NULL, 1, NULL, 0);
-  /*
-  // WiFi Manager: Secure non-hardcoded approach for wi-fi connection
-  WiFiManager wm;                                                // Local initialization of WiFi Manager object
-  bool res = wm.autoConnect("AP ESP Group 5", ESP_AP_PASSWORD);  // Connect to Wi-Fi
-
-  // If connection fails
-  if (!res) {
-    Serial.println("Failed to connect!");
-  } else {  // If connectiond doesn't fail
-    Serial.println("Connected to Wi-Fi!");
-    ClientMQTT.setServer(mqtt_server, mqtt_port);  // Setup MQTT server
-    ClientMQTT.setCallback(callback);              // Setup callback function for MQTT
-    mqtt_reconnect();                              // Connect to MQTT
-    xTaskCreatePinnedToCore(vTaskMQTTConnection, "Handle MQTT Connection Task", 1 * 1024, NULL, 2, NULL, 1);
-    xTaskCreatePinnedToCore(vTaskReadCard, "Read Card Task", 2 * 1024, NULL, 1, NULL, 0);
-  }
-  */
 
   vTaskDelete(NULL);  // Delete loop
-  /* 
-  // HTTP Test Connection
-  HTTP.begin(serverName.c_str());
-
-  if (HTTP.GET() > 0) {
-    Serial.println(HTTP.getString());
-  }
-  HTTP.end();
-  */
 }
 
 

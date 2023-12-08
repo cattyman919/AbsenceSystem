@@ -34,9 +34,10 @@ class MahasiswaOtpViewModel extends FormViewModel {
     try {
       await client.connect();
     } catch (e) {
-      //print('Exception: $e');
       client.disconnect();
     }
+
+    client.autoReconnect = true;
 
     // Subscribe to the same topic
     client.subscribe('esp32/cardDetected', MqttQos.exactlyOnce);

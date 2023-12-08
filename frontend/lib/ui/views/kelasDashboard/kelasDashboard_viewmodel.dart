@@ -11,7 +11,6 @@ import 'package:stacked_services/stacked_services.dart';
 class DosenViewModel extends BaseViewModel {
   final _apiService = locator<ApiService>();
   final _dialogService = locator<DialogService>();
-  final _bottomSheetService = locator<BottomSheetService>();
   final _navigationService = locator<NavigationService>();
 
   final RefreshController refreshController =

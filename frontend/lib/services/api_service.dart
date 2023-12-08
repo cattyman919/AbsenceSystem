@@ -1,16 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:iot/app/app.locator.dart';
 import 'package:iot/models/absenKelas.model.dart';
 import 'package:iot/models/kelas.model.dart';
-import 'package:stacked_services/stacked_services.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
   final storage = const FlutterSecureStorage();
 
-  final _dialogService = locator<DialogService>();
   final localhostIP = "http://10.0.2.2:3000";
   final deployURL = "https://absence-system.vercel.app";
 

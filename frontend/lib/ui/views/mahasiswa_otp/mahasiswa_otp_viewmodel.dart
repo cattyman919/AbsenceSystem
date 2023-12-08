@@ -69,6 +69,13 @@ class MahasiswaOtpViewModel extends FormViewModel {
     publishMessage("${otpValue!}id:$clientID", 'esp32/otpEntered');
 
     updateStatusMessage("Waiting for response...");
+    await Future.delayed(const Duration(seconds: 10));
+
+    if (isBusy == true) {
+      _dialogService.showCustomDialog(
+          variant: DialogType.error, description: "OTP Authentication Timeout");
+      setBusy(false);
+    }
   }
 
   // Publishing to the topic
@@ -81,6 +88,7 @@ class MahasiswaOtpViewModel extends FormViewModel {
   void listenForVerificationResult() async {
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+      final topic = c[0].topic;
       final String message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
@@ -98,7 +106,7 @@ class MahasiswaOtpViewModel extends FormViewModel {
             description: "OTP Authentication Failed");
         setBusy(false);
         rfid_tag = "";
-      } else if (c[0].topic == "") {
+      } else if (topic.compareTo("esp32/cardDetected") == 0) {
         rfid_tag = message;
       }
       notifyListeners();

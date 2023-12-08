@@ -800,6 +800,26 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
       ) as _i7.Future<List<_i10.Kelas>>);
 
   @override
+  _i7.Future<void> createKelas(String? nama) => (super.noSuchMethod(
+        Invocation.method(
+          #createKelas,
+          [nama],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> deleteKelas(int? id) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteKelas,
+          [id],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
   _i7.Future<_i3.AbsenKelas> fetchAbsenKelas(
     int? idKelas,
     int? mingguKe,
@@ -836,6 +856,16 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
       ) as _i7.Future<_i3.AbsenKelas>);
 
   @override
+  _i7.Future<void> deleteAbsensi(int? id) => (super.noSuchMethod(
+        Invocation.method(
+          #deleteAbsensi,
+          [id],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
   _i7.Future<void> register(
     String? username,
     String? password,
@@ -856,8 +886,7 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
   _i7.Future<void> registerMahasiswa(
     String? nama,
     String? npm,
-    String? rfid_tag,
-    int? otp,
+    String? rfidTag,
     List<int>? kelasIds,
   ) =>
       (super.noSuchMethod(
@@ -866,8 +895,7 @@ class MockApiService extends _i1.Mock implements _i9.ApiService {
           [
             nama,
             npm,
-            rfid_tag,
-            otp,
+            rfidTag,
             kelasIds,
           ],
         ),

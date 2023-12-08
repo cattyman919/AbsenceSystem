@@ -11,7 +11,7 @@ import 'package:uuid/uuid.dart';
 class MahasiswaOtpViewModel extends FormViewModel {
   final _navigationService = locator<NavigationService>();
   final _dialogService = locator<DialogService>();
-  final String uuid = Uuid().v4();
+  final String clientID = const Uuid().v1();
 
   late final mqtt.MqttServerClient client;
 
@@ -21,21 +21,14 @@ class MahasiswaOtpViewModel extends FormViewModel {
 
   String get statusMessage => _statusMessage;
 
-  Future<void> goToRegister() async {
-    await _navigationService.navigateTo(Routes.mahasiswaRegisterView);
-  }
-
-  Future<void> goToDosenLogin() async {
-    await _navigationService.navigateTo(Routes.dosenLoginView);
-  }
-
   void updateStatusMessage(String newMessage) {
     _statusMessage = newMessage;
     notifyListeners(); // Notify the UI about the update
   }
 
   void init() async {
-    client = mqtt.MqttServerClient('broker.hivemq.com', uuid);
+    print('Init OTP');
+    client = mqtt.MqttServerClient('broker.hivemq.com', clientID);
 
     client.setProtocolV311();
 
@@ -63,23 +56,19 @@ class MahasiswaOtpViewModel extends FormViewModel {
     }
 
     setBusy(true);
-    //updateStatusMessage("Connecting to MQTT...");
 
     updateStatusMessage("Publishing Message...");
 
-    publishMessage(otpValue!, 'esp32/otpEntered');
+    publishMessage(otpValue! + "id:" + clientID, 'esp32/otpEntered');
 
     updateStatusMessage("Waiting for response...");
-
-    // Call publishMessage with the data you want to send
   }
 
   // Publishing to the topic
-  publishMessage(String message, String topic) {
+  void publishMessage(String message, String topic) {
     final builder = MqttClientPayloadBuilder();
     builder.addString(message);
-    client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!,
-        retain: false);
+    client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
   }
 
   void listenForVerificationResult() async {
@@ -89,14 +78,15 @@ class MahasiswaOtpViewModel extends FormViewModel {
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
       print('Received message:$message from topic: ${c[0].topic}>');
+      print(c[0].payload);
 
-      if (message == "Success") {
+      if (message == "Success:${clientID}") {
         _dialogService.showCustomDialog(
             variant: DialogType.success,
             description: "OTP Authentication Success");
         setBusy(false);
         rfid_tag = "";
-      } else if (message == "Failed") {
+      } else if (message == "Failed:${clientID}") {
         _dialogService.showCustomDialog(
             variant: DialogType.error,
             description: "OTP Authentication Failed");
@@ -106,7 +96,14 @@ class MahasiswaOtpViewModel extends FormViewModel {
         rfid_tag = message;
       }
       notifyListeners();
-      // Handle the message (e.g., update UI)
     });
+  }
+
+  Future<void> goToRegister() async {
+    await _navigationService.navigateTo(Routes.mahasiswaRegisterView);
+  }
+
+  Future<void> goToDosenLogin() async {
+    await _navigationService.navigateTo(Routes.dosenLoginView);
   }
 }

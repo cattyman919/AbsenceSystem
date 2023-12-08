@@ -11,6 +11,13 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
   const MahasiswaRegisterView({Key? key}) : super(key: key);
 
   @override
+  void onDispose(MahasiswaRegisterViewModel viewModel) {
+    // TODO: implement onDispose
+    super.onDispose(viewModel);
+    print("Dispose register");
+  }
+
+  @override
   Widget builder(
     BuildContext context,
     MahasiswaRegisterViewModel viewModel,

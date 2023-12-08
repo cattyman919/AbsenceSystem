@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
 import 'package:iot/app/app.router.dart';
@@ -55,16 +56,6 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
   }
 
   void listenForTopic() async {
-    // List<MqttReceivedMessage<MqttMessage>> response =
-    //     await client.updates!.listen((event) { });
-    // final MqttPublishMessage recMess =
-    //     response[0].payload as MqttPublishMessage;
-    // final String message =
-    //     MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
-
-    // print('Received message:$message from topic: ${response[0].topic}>');
-    // rfid_tag = message;
-
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       final String message =
@@ -73,8 +64,6 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
       print('Received message:$message from topic: ${c[0].topic}>');
       rfid_tag = message;
       notifyListeners();
-
-      // Handle the message (e.g., update UI)
     });
   }
 
@@ -100,6 +89,6 @@ class MahasiswaRegisterViewModel extends ReactiveViewModel
   }
 
   Future<void> goToOTP() async {
-    await _navigationService.navigateTo(Routes.mahasiswaOtpView);
+    _navigationService.popUntil(ModalRoute.withName(Routes.mahasiswaOtpView));
   }
 }

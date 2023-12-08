@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
@@ -14,7 +13,7 @@ class NewKelasDialogModel extends BaseViewModel {
 
   void createNewKelas(Function(DialogResponse) completer) async {
     if (namaKelasController.text.isEmpty) {
-      _dialogService.showCustomDialog(
+      throw _dialogService.showCustomDialog(
           variant: DialogType.error, description: "Input is empty");
     }
     try {

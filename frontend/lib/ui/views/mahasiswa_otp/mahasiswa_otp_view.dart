@@ -47,6 +47,7 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
               verticalSpaceMedium,
               TextField(
                 controller: otpController,
+                maxLength: 4,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                     labelText: 'Enter OTP',
@@ -71,9 +72,6 @@ class MahasiswaOtpView extends StackedView<MahasiswaOtpViewModel>
                     : const Text('Verifikasi OTP',
                         style: TextStyle(color: Colors.white)),
               ),
-              viewModel.isBusy
-                  ? Text(viewModel.statusMessage)
-                  : const SizedBox.shrink(),
               navigationLinks(viewModel)
             ],
           ),

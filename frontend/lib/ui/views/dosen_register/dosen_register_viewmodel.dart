@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:iot/app/app.dialogs.dart';
 import 'package:iot/app/app.locator.dart';
 import 'package:iot/app/app.router.dart';
@@ -14,9 +15,7 @@ class DosenRegisterViewModel extends FormViewModel {
   void registerDosen() async {
     setBusy(true);
     try {
-      print("Registering...");
       await _apiService.register(usernameValue!, passwordValue!);
-      print("Finished Register Dosen");
       clearForm();
       setBusy(false);
       _dialogService
@@ -34,6 +33,6 @@ class DosenRegisterViewModel extends FormViewModel {
   }
 
   Future<void> goToLoginDosen() async {
-    await _navigationService.navigateTo(Routes.dosenLoginView);
+    _navigationService.popUntil(ModalRoute.withName(Routes.dosenLoginView));
   }
 }

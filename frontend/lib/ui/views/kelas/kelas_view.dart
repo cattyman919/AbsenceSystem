@@ -62,19 +62,7 @@ class KelasView extends StackedView<KelasViewModel> {
                 }).toList(),
               ),
               verticalSpaceMedium,
-              const Text(
-                'Hadir',
-                style: TextStyle(color: Colors.white, fontSize: 25),
-              ),
-              verticalSpaceMedium,
-              viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
-              verticalSpaceMedium,
-              const Text(
-                'Tidak Hadir',
-                style: TextStyle(color: Colors.white, fontSize: 25),
-              ),
-              verticalSpaceMedium,
-              viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
+              ...absensiKelas(viewModel),
             ]),
           ),
         ),
@@ -82,11 +70,43 @@ class KelasView extends StackedView<KelasViewModel> {
     );
   }
 
+  List<Widget> absensiKelas(KelasViewModel viewModel) {
+    bool tidakAdaMahasiswaTerdaftar = viewModel.absenKelas.hadir.isEmpty &&
+        viewModel.absenKelas.tidakHadir.isEmpty;
+
+    if (tidakAdaMahasiswaTerdaftar && viewModel.isBusy == false) {
+      return [
+        Center(
+          child: const Text(
+            "Tidak ada mahasiswa yang terdaftar pada kelas ini",
+            style: TextStyle(color: Colors.white, fontSize: 25),
+          ),
+        )
+      ];
+    }
+
+    return [
+      const Text(
+        'Hadir',
+        style: TextStyle(color: Colors.green, fontSize: 25),
+      ),
+      verticalSpaceMedium,
+      viewModel.isBusy ? loadingSpinner() : hadirKelas(viewModel),
+      verticalSpaceLarge,
+      const Text(
+        'Tidak Hadir',
+        style: TextStyle(color: Colors.red, fontSize: 25),
+      ),
+      verticalSpaceMedium,
+      viewModel.isBusy ? loadingSpinner() : tidakHadirKelas(viewModel),
+    ];
+  }
+
   Widget hadirKelas(KelasViewModel viewModel) {
     return viewModel.absenKelas.hadir.isEmpty
         ? const Center(
             child: Text(
-              'Kosong',
+              'Tidak ada yang hadir',
               style: TextStyle(color: Colors.white, fontSize: 22),
             ),
           )
@@ -183,7 +203,7 @@ class KelasView extends StackedView<KelasViewModel> {
     return viewModel.absenKelas.tidakHadir.isEmpty
         ? const Center(
             child: Text(
-              'Kosong',
+              "Semua mahasiswa hadir",
               style: TextStyle(color: Colors.white, fontSize: 22),
             ),
           )

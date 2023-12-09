@@ -66,7 +66,7 @@ For details regarding the mobile application, please check the [frontend README.
 
 The following images are the mobile app for lecturer to monitor attendance (left) and for student to enter OTP when entering a class (right).
 
-<div style="display: flex">
+<div align="center" style="display: flex">
   <img src="others/images/App1.png" alt="Monitor Image"/>
   <img src="others/images/App2.png" alt="OTP Image"/>
 </div>

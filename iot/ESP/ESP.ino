@@ -108,8 +108,22 @@ void callback(char* topic, byte* payload, unsigned int length) {
         ClientMQTT.publish("esp32/otpVerificationResult", resultMsg.c_str());
         delay(3000);
         LCD.clear();
+      } else if(responseCode == 403) {
+        Serial.println("Student not registered.");
+        LCD.clear();
+        LCD.setCursor(0, 0);
+        LCD.print("ERROR unenrolled");
+        LCD.setCursor(0, 1);
+        LCD.print("Contact Admin");
+        delay(2000);
+        LCD.clear();
       } else {
         Serial.println("Failed to record.");
+        LCD.clear();
+        LCD.setCursor(0, 0);
+        LCD.print("ERROR failed");
+        delay(2000);
+        LCD.clear();
       }
     } else {
       Serial.println("OTP Verification Failed.");

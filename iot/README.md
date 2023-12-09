@@ -1,9 +1,7 @@
 # ESP32 IoT Attendance System
 
-![Project Logo](/path/to/project/logo.png)
-
 ## Introduction
-The ESP32 IoT Attendance System is a project developed for the Internet of Things and Real-Time Operating Systems course at Universitas Indonesia. It aims to provide a convenient and efficient way to track attendance using ESP32 microcontroller.
+DanceRTOS is a project developed for the Internet of Things and Real-Time Operating Systems course at Universitas Indonesia. It aims to provide a convenient and efficient way to track attendance using ESP32 microcontroller.
 
 ## ✨ Features
 📊 Real-time attendance tracking

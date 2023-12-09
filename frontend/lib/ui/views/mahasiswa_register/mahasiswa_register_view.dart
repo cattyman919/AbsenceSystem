@@ -11,13 +11,6 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
   const MahasiswaRegisterView({Key? key}) : super(key: key);
 
   @override
-  void onDispose(MahasiswaRegisterViewModel viewModel) {
-    // TODO: implement onDispose
-    super.onDispose(viewModel);
-    print("Dispose register");
-  }
-
-  @override
   Widget builder(
     BuildContext context,
     MahasiswaRegisterViewModel viewModel,
@@ -47,7 +40,7 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                 verticalSpaceMedium,
                 Text(
                   'RFID : ${viewModel.rfid_tag}',
-                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  style: const TextStyle(fontSize: 15, color: Colors.white),
                 ),
                 verticalSpaceMedium,
                 TextField(
@@ -85,24 +78,22 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
                 ),
                 verticalSpaceMedium,
                 viewModel.isBusy
-                    ? Container(
-                        child: const Column(
-                          children: [
-                            SizedBox(
-                                width: 32,
-                                height: 32,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 3,
-                                )),
-                            Padding(
-                                padding: EdgeInsets.only(top: 20),
-                                child: Text(
-                                  "Fetching data...",
-                                  style: TextStyle(color: Colors.grey),
-                                )),
-                          ],
-                        ),
+                    ? const Column(
+                        children: [
+                          SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 3,
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Text(
+                                "Fetching data...",
+                                style: TextStyle(color: Colors.grey),
+                              )),
+                        ],
                       )
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -178,7 +169,7 @@ class MahasiswaRegisterView extends StackedView<MahasiswaRegisterViewModel>
             return SizedBox(
               width: double.maxFinite,
               child: ListView.builder(
-                itemCount: model.listKelas.length ?? 0,
+                itemCount: model.listKelas.length,
                 shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   final kelas = model.listKelas[index];

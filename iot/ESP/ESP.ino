@@ -182,7 +182,7 @@ void vTaskMQTTConnection(void* params) {
 void vTaskWiFiConnection(void* params) {
   while (1) {
     unsigned long currentMillis = millis();
-    // if WiFi is down, try reconnecting every 30 seconds
+    // if WiFi is down, try reconnecting every 15 seconds
     if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= interval)) {
       Serial.print(millis());
       Serial.println("Reconnecting to WiFi...");
@@ -332,6 +332,7 @@ void setup() {
     delay(500);
     Serial.print(". ");
   }
+  LCD.clear();
   Serial.println("");
   Serial.println("Wi-Fi Connected!");
   ClientMQTT.setServer(mqtt_server, mqtt_port);  // Setup MQTT server

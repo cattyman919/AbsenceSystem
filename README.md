@@ -62,7 +62,13 @@ For implementation of the hardware code, please refer to the [IOT directory](./i
 </div>
 
 ### Software Implementation Details
-For details regarding the mobile application, please check the [frontend README.md](./frontend/README.md), while the features can be seen at the [backend README.md](./backend/README.md). The mobile application is used by the students to enter the class by verifying a random OTP given by the ESP32. This OTP is transported via MQTT between the student's phone and ESP32. Lecturers use the mobile application to observer the attendance log and also have the right to delete a student's attendance record. This is useful if lecturers catch a student who skips the class. Administrators can use a dedicated Blynk app to change the class and week setting of the ESP32. It can be modular if DanceRTOS is to be distributed to different classes/courses. The following image is the mobile app used by lecturer to monitor attendance.
+For details regarding the mobile application, please check the [frontend README.md](./frontend/README.md), while the features can be seen at the [backend README.md](./backend/README.md). The mobile application is used by the students to enter the class by verifying a random OTP given by the ESP32. This OTP is transported via MQTT between the student's phone and ESP32. Lecturers use the mobile application to observer the attendance log and also have the right to delete a student's attendance record. This is useful if lecturers catch a student who skips the class. Administrators can use a dedicated Blynk app to change the class and week setting of the ESP32. It can be modular if DanceRTOS is to be distributed to different classes/courses.
+
+The ERD of the database implementation can be seen below.
+
+<div align="center" style="display: flex">
+  <img src="others/images/ERD Database.jpg" alt="ERD Database"/>
+</div>
 
 The following images are the mobile app for lecturer to monitor attendance (left) and for student to enter OTP when entering a class (right).
 
